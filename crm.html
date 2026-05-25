@@ -200,10 +200,11 @@
       border-top: 1px solid var(--rule);
     }
     .problem-card {
-      padding: 28px 28px 28px 0;
+      padding: 28px;
       border-right: 1px solid var(--rule);
     }
-    .problem-card:last-child { border-right: 0; padding-right: 0; }
+    .problem-card:first-child { padding-left: 0; }
+    .problem-card:last-child { padding-right: 0; border-right: 0; }
     .problem-num {
       font-family: var(--mono);
       font-size: 11px; letter-spacing: 0.16em;
@@ -801,19 +802,20 @@
 
     /* ── final cta ─────────────────────────────────────────────────── */
     .final { padding: 88px 0; border-top: 1px solid var(--rule); background: var(--bg-2); }
-    .final-inner {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 56px;
-      align-items: center;
+    .final-simple {
+      max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
     }
-    .final h2 { margin-bottom: 20px; }
+    .final h2 { margin-bottom: 0; }
     .email-card {
       background: var(--paper);
       border: 1px solid var(--rule);
       border-radius: 8px;
       padding: 28px;
       box-shadow: 0 24px 40px -28px rgba(40, 30, 10, 0.2);
+      margin-top: 36px;
+      text-align: left;
     }
     .email-card .label-mono { margin-bottom: 12px; }
     .email-line {
@@ -838,25 +840,6 @@
       border: 0;
     }
     .email-line .copy.copied { color: var(--accent); }
-    .checklist {
-      list-style: none; padding: 0; margin: 0;
-      display: grid; gap: 10px;
-    }
-    .checklist li {
-      display: grid;
-      grid-template-columns: 20px 1fr;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--ink-2);
-    }
-    .checklist li::before {
-      content: "✓";
-      color: var(--accent);
-      font-weight: 700;
-      font-family: var(--mono);
-      font-size: 14px;
-      line-height: 1.4;
-    }
 
     /* ── faq ───────────────────────────────────────────────────────── */
     .faq { padding: 64px 32px; border-top: 1px solid var(--rule); }
@@ -916,7 +899,7 @@
 
     /* ── responsive ────────────────────────────────────────────────── */
     @media (max-width: 960px) {
-      .problem-head, .section-head, .feature-2col, .final-inner {
+      .problem-head, .section-head, .feature-2col {
         grid-template-columns: 1fr;
         gap: 28px;
       }
@@ -1466,53 +1449,21 @@
   <!-- ── FINAL CTA ───────────────────────────────────────────────── -->
   <section class="final" id="contact">
     <div class="wrap">
-      <div class="final-inner">
-        <div>
-          <div class="eyebrow bare" style="color: var(--warn)">— Готови да опитате?</div>
-          <h2 class="display xl" style="margin-top: 16px">
-            Заявете демо.<br />
-            До 24 часа ще се чуем.
-          </h2>
-          <p class="lede" style="margin-top: 18px">
-            Пишете ни в свободен текст: колко коли карате на месец, от къде ги внасяте, и кое ви боли най-много. Без обвързване, без презентация на 40 слайда.
-          </p>
-          <ul class="checklist" style="margin-top: 24px">
-            <li>30-минутно демо по Google Meet или на живо в Бургас / София</li>
-            <li>Мигрираме обявите и контактите ви безплатно</li>
-            <li>Без обвързване с дългосрочен договор</li>
-          </ul>
-        </div>
+      <div class="final-simple">
+        <div class="eyebrow bare" style="color: var(--warn)">— Интересувате се?</div>
+        <h2 class="display xl" style="margin-top: 16px">Свържете се с нас.</h2>
 
         <div class="email-card">
-          <div class="label-mono">пишете ни</div>
+          <div class="label-mono">пишете ни на</div>
           <div class="email-line">
-            <a href="mailto:contact@kolaotamerika.com?subject=Демо%20заявка%20-%20колаотамерика%2Fcrm">contact@kolaotamerika.com</a>
+            <a href="mailto:contact@kolaotamerika.com?subject=Заявка%20-%20колаотамерика%2Fcrm">contact@kolaotamerika.com</a>
             <button class="copy" data-copy-email type="button">копирай</button>
           </div>
-
           <a class="btn btn-primary"
              style="width: 100%; justify-content: center; padding: 14px"
-             href="mailto:contact@kolaotamerika.com?subject=Демо%20заявка%20-%20колаотамерика%2Fcrm&body=Здравейте%2C%0A%0AНие%20сме%20%5Bиме%20на%20фирма%5D.%20Внасяме%20коли%20от%20%5BСАЩ%2FКанада%2FЕвропа%2FЯпония%2FКорея%5D.%0AОбем%3A%20%5BX%5D%20коли%20на%20месец.%0AНай-голяма%20болка%3A%20%0A%0AБихме%20искали%20демо.%0A">
-            Заяви демо по имейл →
+             href="mailto:contact@kolaotamerika.com?subject=Заявка%20-%20колаотамерика%2Fcrm">
+            Изпрати имейл →
           </a>
-
-          <hr class="rule" style="margin: 20px 0" />
-
-          <div class="label-mono" style="margin-bottom: 8px">или ни намерете</div>
-          <div style="display: grid; gap: 6px; font-size: 13px">
-            <div style="display: flex; justify-content: space-between">
-              <span style="color: var(--ink-3)">Viber Business</span>
-              <span class="mono">+359 88 ··· ···</span>
-            </div>
-            <div style="display: flex; justify-content: space-between">
-              <span style="color: var(--ink-3)">Адрес</span>
-              <span>Бургас · ул. Александровска</span>
-            </div>
-            <div style="display: flex; justify-content: space-between">
-              <span style="color: var(--ink-3)">Отговаряме до</span>
-              <span style="color: var(--accent)">24 часа</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
