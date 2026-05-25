@@ -1,0 +1,6 @@
+# Claude Design handoff bundles — temporary working copies, not source
+design/
+
+# OS / editor cruft
+.DS_Store
+*.swp

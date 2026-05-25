@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>колаотамерика/crm — CRM за вносители на коли</title>
+  <meta name="description" content="Единна входяща кутия, обяви, проследяване и документи за фирми, които внасят коли от САЩ, Канада, Европа, Япония и Корея." />
+  <meta name="theme-color" content="#f3eee5" />
+  <link rel="canonical" href="https://kolaotamerika.com/crm" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kolaotamerika.com/crm" />
+  <meta property="og:title" content="колаотамерика/crm — CRM за вносители на коли" />
+  <meta property="og:description" content="Единна входяща кутия, обяви, проследяване и документи. Спрете да отговаряте на 100 обаждания на ден." />
+  <meta property="og:locale" content="bg_BG" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="колаотамерика/crm — CRM за вносители на коли" />
+  <meta name="twitter:description" content="Единна входяща кутия, обяви, проследяване и документи. Спрете да отговаряте на 100 обаждания на ден." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@500;600;700;800;900&display=swap" />
+
+  <style>
+    /* ===========================================================
+       kolaotamerika · CRM landing
+       warm cream + dark display + monospace labels
+       =========================================================== */
+
+    :root {
+      --bg: #f3eee5;
+      --bg-2: #ede6d8;
+      --bg-3: #e6dec9;
+      --ink: #1a1814;
+      --ink-2: #3a352c;
+      --ink-3: #6b6557;
+      --ink-4: #a39d8d;
+      --rule: #d9d1bd;
+      --rule-strong: #c3b9a0;
+      --paper: #faf6ed;
+      --paper-2: #fbf8f1;
+
+      --accent: #6ba368;
+      --accent-soft: #d4e3cf;
+      --warn: #c7553a;
+      --warn-soft: #f0d8cf;
+
+      --display: "Unbounded", "Inter", -apple-system, sans-serif;
+      --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+      --radius-pill: 999px;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ── layout primitives ─────────────────────────────────────────── */
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
+    .wrap-narrow { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+    .rule { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+    /* ── typography ────────────────────────────────────────────────── */
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .eyebrow::before,
+    .eyebrow::after {
+      content: ""; height: 1px; width: 18px; background: var(--warn);
+    }
+    .eyebrow.bare::before, .eyebrow.bare::after { display: none; }
+
+    .display {
+      font-family: var(--display);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.0;
+      color: var(--ink);
+      margin: 0;
+      text-wrap: balance;
+    }
+    .display.xxl { font-size: clamp(48px, 5.6vw, 92px); }
+    .display.xl  { font-size: clamp(38px, 4.0vw, 64px); }
+    .display.lg  { font-size: clamp(30px, 2.8vw, 46px); }
+    .display.md  { font-size: clamp(24px, 2.0vw, 34px); }
+
+    .lede {
+      font-size: 19px;
+      color: var(--ink-2);
+      max-width: 60ch;
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+    .mono { font-family: var(--mono); }
+    .label-mono {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    /* ── buttons ───────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-pill);
+      font-family: var(--sans);
+      font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
+      text-decoration: none; cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+      white-space: nowrap;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--ink); color: var(--paper); }
+    .btn-primary:hover { background: #000; }
+    .btn-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+    .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+    .btn-sm { padding: 8px 14px; font-size: 12px; }
+    .btn-xs { padding: 6px 12px; font-size: 11px; font-family: var(--mono); letter-spacing: 0.06em; }
+
+    /* ── header ────────────────────────────────────────────────────── */
+    .site-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .brand {
+      font-family: var(--mono);
+      font-size: 12px; letter-spacing: 0.22em;
+      text-transform: uppercase; font-weight: 500;
+      color: var(--ink); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .brand-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .nav { display: flex; gap: 28px; align-items: center; }
+    .nav a {
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-2); text-decoration: none;
+    }
+    .nav a:hover { color: var(--ink); }
+
+    /* ── hero ──────────────────────────────────────────────────────── */
+    .hero { padding: 80px 32px 40px; text-align: center; }
+    .hero .eyebrow { margin-bottom: 28px; }
+    .hero h1 { margin: 0 auto; max-width: 16ch; }
+    .hero .lede { margin: 28px auto 36px; text-align: center; }
+    .hero-ctas { display: inline-flex; gap: 12px; margin-bottom: 56px; flex-wrap: wrap; justify-content: center; }
+    .hero-meta {
+      display: inline-flex; gap: 28px;
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 14px 0;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .hero-meta .tick { color: var(--accent); margin-right: 4px; }
+
+    /* ── problem strip ─────────────────────────────────────────────── */
+    .problem { padding: 56px 32px 64px; border-top: 1px solid var(--rule); }
+    .problem-head {
+      display: grid; grid-template-columns: 1fr 1.6fr;
+      gap: 56px; align-items: end;
+      padding-bottom: 36px;
+    }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--rule);
+    }
+    .problem-card {
+      padding: 28px 28px 28px 0;
+      border-right: 1px solid var(--rule);
+    }
+    .problem-card:last-child { border-right: 0; padding-right: 0; }
+    .problem-num {
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.16em;
+      color: var(--ink-4); margin-bottom: 14px;
+    }
+    .problem-title {
+      font-family: var(--display);
+      font-weight: 900; font-size: 24px;
+      line-height: 1.1; margin: 0 0 10px;
+    }
+    .problem-card p { color: var(--ink-2); margin: 0; }
+
+    /* ── section frame ─────────────────────────────────────────────── */
+    .section { padding: 88px 32px; border-top: 1px solid var(--rule); }
+    .section-head {
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: 64px; align-items: end;
+      padding-bottom: 48px;
+    }
+    .section-tag {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .section-tag .num {
+      background: var(--ink); color: var(--paper);
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+
+    /* ── mock card ─────────────────────────────────────────────────── */
+    .mock {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 24px 48px -28px rgba(40, 30, 10, 0.25);
+    }
+    .mock-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--paper-2);
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .mock-bar .dots { display: inline-flex; gap: 5px; }
+    .mock-bar .dots i {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--rule-strong);
+      display: inline-block;
+    }
+
+    /* ── feature 2-col grid ────────────────────────────────────────── */
+    .feature-2col {
+      display: grid; grid-template-columns: 0.9fr 1.1fr;
+      gap: 56px; align-items: stretch;
+    }
+    .feature-2col.reverse > :first-child { order: 2; }
+    .feat-copy h2 { margin-bottom: 18px; }
+    .feat-copy .lede { margin-bottom: 28px; }
+    .feat-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+    .feat-list li {
+      display: grid; grid-template-columns: 28px 1fr;
+      gap: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .feat-list li:last-child { border-bottom: 0; }
+    .feat-list .k {
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      padding-top: 2px;
+    }
+    .feat-list strong { display: block; font-weight: 600; margin-bottom: 2px; }
+    .feat-list .desc { color: var(--ink-2); font-size: 14px; }
+
+    /* ── inbox mock ────────────────────────────────────────────────── */
+    .inbox { display: grid; grid-template-columns: 240px 1fr; min-height: 480px; }
+    .inbox-list { border-right: 1px solid var(--rule); background: var(--paper-2); }
+    .inbox-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--rule);
+      cursor: pointer;
+      display: grid; gap: 4px;
+      background: transparent;
+      border-left: 0; border-right: 0; border-top: 0;
+      width: 100%; text-align: left;
+      font: inherit; color: inherit;
+    }
+    .inbox-item.active { background: var(--bg-2); }
+    .inbox-item .name {
+      font-weight: 600; font-size: 13px;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .inbox-item .when {
+      font-family: var(--mono);
+      font-size: 10px; color: var(--ink-4);
+      letter-spacing: 0.06em;
+    }
+    .inbox-item .snippet {
+      font-size: 12px; color: var(--ink-3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .inbox-item .channels { display: flex; gap: 4px; margin-top: 4px; }
+    .chan {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.08em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: var(--bg-3);
+      color: var(--ink-2);
+      text-transform: uppercase;
+    }
+    .chan.viber { background: #e7dcef; color: #4f3667; }
+    .chan.fb    { background: #d6e0f0; color: #2b4a7a; }
+    .chan.tel   { background: #e2dcd0; color: #4f4636; }
+    .chan.email { background: #e2e7dc; color: #4a5c3a; }
+
+    .inbox-thread { padding: 24px; display: flex; flex-direction: column; }
+    .thread-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .thread-head h4 {
+      font-family: var(--display);
+      font-weight: 900; font-size: 22px;
+      margin: 0;
+    }
+    .msg-list { display: grid; gap: 12px; flex: 1; align-content: start; }
+    .msg {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px; line-height: 1.4;
+    }
+    .msg .meta {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 4px; opacity: 0.6;
+    }
+    .msg.in { background: var(--bg-2); color: var(--ink); justify-self: start; border-bottom-left-radius: 2px; }
+    .msg.out { background: var(--ink); color: var(--paper); justify-self: end; border-bottom-right-radius: 2px; }
+
+    .composer {
+      margin-top: 16px;
+      display: flex; gap: 8px;
+      border-top: 1px solid var(--rule);
+      padding-top: 14px;
+    }
+    .composer input {
+      flex: 1;
+      border: 1px solid var(--rule);
+      background: var(--paper-2);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+    }
+    .composer input:focus { border-color: var(--ink); }
+
+    /* ── ad form ───────────────────────────────────────────────────── */
+    .ad-mock { display: grid; grid-template-columns: 1fr 320px; }
+    .ad-form { padding: 24px; }
+    .ad-side {
+      border-left: 1px solid var(--rule);
+      padding: 24px;
+      background: var(--paper-2);
+    }
+    .form-row { display: grid; gap: 6px; margin-bottom: 16px; }
+    .form-row label {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      border: 1px solid var(--rule);
+      background: var(--bg);
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus { border-color: var(--ink); background: var(--paper); }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+    .seg {
+      display: inline-flex;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      padding: 3px;
+      background: var(--bg);
+    }
+    .seg button {
+      border: 0; background: transparent;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--ink-3);
+    }
+    .seg button.active { background: var(--ink); color: var(--paper); }
+
+    .toggle-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--rule);
+      gap: 12px;
+    }
+    .toggle-row:last-child { border-bottom: 0; }
+    .toggle-row .t-label { font-size: 13px; }
+    .toggle-row .t-sub {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-4); margin-top: 2px;
+    }
+    .switch {
+      width: 36px; height: 20px;
+      background: var(--rule-strong);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      transition: background .15s ease;
+      border: 0; padding: 0;
+    }
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--paper);
+      transition: transform .18s ease;
+    }
+    .switch.on { background: var(--accent); }
+    .switch.on::after { transform: translateX(16px); }
+
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .img-cell {
+      aspect-ratio: 4/3;
+      background: repeating-linear-gradient(135deg, var(--bg-3) 0 6px, var(--bg-2) 6px 12px);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      position: relative;
+    }
+    .img-cell.lead::before {
+      content: "ОСНОВНА";
+      position: absolute;
+      top: 6px; left: 6px;
+      background: var(--ink); color: var(--paper);
+      font-size: 8px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      letter-spacing: 0.14em;
+    }
+    .img-cell.add {
+      background: var(--paper);
+      border-style: dashed;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .img-cell.add .plus {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .ad-side h5 { font-family: var(--display); font-weight: 900; font-size: 20px; margin: 0 0 4px; }
+    .ad-side .ssub {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 18px;
+    }
+    .kv {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      row-gap: 6px; column-gap: 12px;
+      font-size: 13px;
+    }
+    .kv .k {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      align-self: center;
+    }
+    .kv .v { color: var(--ink); }
+    .kv .row { display: contents; }
+    .ad-price {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 30px;
+      line-height: 1.1;
+      margin-top: 4px;
+    }
+    .ad-price .cur { font-size: 16px; color: var(--ink-3); }
+
+    .ad-toggles-box {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin-top: 4px;
+    }
+
+    /* ── tracking ──────────────────────────────────────────────────── */
+    .tracker { padding: 24px; }
+    .car-head {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      gap: 20px; align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 22px;
+    }
+    .car-thumb {
+      aspect-ratio: 4/3;
+      background: repeating-linear-gradient(135deg, var(--bg-3) 0 6px, var(--bg-2) 6px 12px);
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      color: var(--ink-3);
+      text-transform: uppercase;
+    }
+    .car-meta h4 { font-family: var(--display); font-weight: 900; font-size: 26px; margin: 0 0 6px; line-height: 1; }
+    .car-meta .vin {
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.12em;
+      color: var(--ink-3);
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .car-meta .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--bg-2);
+      color: var(--ink-2);
+      border: 1px solid var(--rule);
+    }
+    .badge.green { background: var(--accent-soft); color: #3f6840; border-color: #b8d0b4; }
+    .badge.amber { background: #ecdfc4; color: #6a532a; border-color: #d6c597; }
+    .car-right { text-align: right; }
+    .car-right .price { font-family: var(--display); font-weight: 900; font-size: 28px; line-height: 1; }
+    .car-right .price-note {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      color: var(--ink-3);
+      text-transform: uppercase; margin-top: 4px;
+    }
+
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ""; position: absolute;
+      top: 8px; bottom: 8px; left: 11px;
+      width: 1px; background: var(--rule);
+    }
+    .tl-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .tl-step:last-child { border-bottom: 0; }
+    .tl-step::before {
+      content: "";
+      position: absolute;
+      left: -22px; top: 18px;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 2px solid var(--rule-strong);
+    }
+    .tl-step.done::before { background: var(--accent); border-color: var(--accent); }
+    .tl-step.active::before {
+      background: var(--paper);
+      border-color: var(--ink);
+      box-shadow: 0 0 0 4px var(--bg-2);
+    }
+    .tl-step .label {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 4px;
+    }
+    .tl-step .title-line { font-weight: 600; font-size: 14px; }
+    .tl-step .desc { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+    .tl-step .when {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .tl-step.pending .title-line,
+    .tl-step.pending .desc { color: var(--ink-4); }
+
+    .doc-strip {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .doc {
+      border: 1px solid var(--rule);
+      background: var(--paper-2);
+      border-radius: 4px;
+      padding: 12px;
+      display: grid; gap: 4px;
+    }
+    .doc .dtype {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .doc .dname { font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .doc .dsize { font-family: var(--mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; }
+    .doc.placeholder {
+      background: transparent;
+      border-style: dashed;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      color: var(--ink-4);
+      text-transform: uppercase;
+    }
+
+    .share-link {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+    .share-link .share-key { color: var(--ink-3); }
+    .share-link .share-url { color: var(--ink); }
+
+    /* ── compare ───────────────────────────────────────────────────── */
+    .compare {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      margin: 32px 0 0;
+      overflow-x: auto;
+    }
+    .compare table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    .compare th, .compare td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: middle;
+    }
+    .compare thead th {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      font-weight: 500;
+      background: var(--bg-2);
+    }
+    .compare td.row-label { font-weight: 500; font-size: 14px; width: 36%; }
+    .compare td .yes,
+    .compare td .no {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-weight: 700; font-size: 12px;
+    }
+    .compare td .yes { background: var(--accent-soft); color: #3f6840; }
+    .compare td .no  { background: var(--bg-3); color: var(--ink-4); }
+    .compare td.col-us { background: var(--paper); }
+    .compare th.col-us { background: var(--ink); color: var(--paper); }
+    .compare th.col-us::before { content: "★"; margin-right: 8px; color: var(--accent); }
+
+    /* ── final cta ─────────────────────────────────────────────────── */
+    .final { padding: 88px 0; border-top: 1px solid var(--rule); background: var(--bg-2); }
+    .final-inner {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .final h2 { margin-bottom: 20px; }
+    .email-card {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: 0 24px 40px -28px rgba(40, 30, 10, 0.2);
+    }
+    .email-card .label-mono { margin-bottom: 12px; }
+    .email-line {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--bg);
+      font-family: var(--mono);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .email-line a { color: var(--ink); text-decoration: none; }
+    .email-line .copy {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+    }
+    .email-line .copy.copied { color: var(--accent); }
+    .checklist {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: 10px;
+    }
+    .checklist li {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--ink-2);
+    }
+    .checklist li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: 700;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    /* ── faq ───────────────────────────────────────────────────────── */
+    .faq { padding: 64px 32px; border-top: 1px solid var(--rule); }
+    .faq-item { border-bottom: 1px solid var(--rule); padding: 18px 0; }
+    .faq-item summary {
+      list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 22px;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item .plus {
+      font-family: var(--mono);
+      font-weight: 400; font-size: 22px;
+      color: var(--ink-3);
+      margin-left: 24px;
+      transition: transform .15s ease;
+    }
+    .faq-item[open] .plus { transform: rotate(45deg); }
+    .faq-item .answer {
+      padding-top: 14px;
+      color: var(--ink-2);
+      max-width: 70ch;
+      line-height: 1.55;
+    }
+
+    /* ── footer ────────────────────────────────────────────────────── */
+    footer.site-foot {
+      padding: 28px 0;
+      border-top: 1px solid var(--rule);
+      font-family: var(--mono);
+      font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer.site-foot a { color: var(--ink-3); text-decoration: none; }
+    footer.site-foot a:hover { color: var(--ink); }
+    .last-updated {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 8px 14px;
+      border-radius: 999px;
+    }
+    .last-updated::before {
+      content: "";
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    /* ── responsive ────────────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .problem-head, .section-head, .feature-2col, .final-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .problem-grid { grid-template-columns: 1fr; }
+      .problem-card { border-right: 0; border-bottom: 1px solid var(--rule); padding: 24px 0; }
+      .inbox { grid-template-columns: 1fr; }
+      .inbox-list { display: none; }
+      .ad-mock { grid-template-columns: 1fr; }
+      .ad-side { border-left: 0; border-top: 1px solid var(--rule); }
+      .car-head { grid-template-columns: 1fr; text-align: left; }
+      .car-right { text-align: left; }
+      .doc-strip { grid-template-columns: 1fr 1fr; }
+      .form-grid-3 { grid-template-columns: 1fr 1fr; }
+      .img-grid { grid-template-columns: repeat(3, 1fr); }
+      .feature-2col.reverse > :first-child { order: 0; }
+      .hero { padding: 56px 24px 24px; }
+      .section { padding: 64px 24px; }
+      .problem { padding: 48px 24px; }
+      .faq { padding: 48px 24px; }
+      .final { padding: 64px 0; }
+      .nav { gap: 14px; }
+      .nav a:not(.btn) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ──────────────────────────────────────────────────── -->
+  <header class="site-header wrap">
+    <a href="#top" class="brand">
+      <span class="brand-dot"></span>
+      колаотамерика<span style="color: var(--ink-4)">/crm</span>
+    </a>
+    <nav class="nav">
+      <a href="#problem">Проблем</a>
+      <a href="#features">Възможности</a>
+      <a href="#tracking">Проследяване</a>
+      <a href="/" title="Каталогът на вносителите">Каталог</a>
+      <a href="#contact" class="btn btn-primary btn-sm" style="color: var(--paper)">Свържи се с нас →</a>
+    </nav>
+  </header>
+
+  <!-- ── HERO ────────────────────────────────────────────────────── -->
+  <section class="hero wrap" id="top">
+    <div class="eyebrow">CRM за вносители на коли</div>
+    <h1 class="display xxl">Спрете да отговаряте на 100 обаждания на ден.</h1>
+    <p class="lede">
+      колаотамерика/crm е операционната система за фирми, които внасят коли от
+      <strong style="color: var(--ink)">САЩ, Канада, Европа, Япония и Корея</strong>.
+      Една обява, един чат, един линк за клиента — от наддаването до връчването на ключовете.
+    </p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-primary">Заяви демо →</a>
+      <a href="#features" class="btn btn-ghost">Виж как работи</a>
+    </div>
+    <div class="hero-meta">
+      <span><span class="tick">✓</span>Viber · WhatsApp · FB · Имейл — в една кутия</span>
+      <span><span class="tick">✓</span>Публични обяви с 1 клик</span>
+      <span><span class="tick">✓</span>Линк за клиента — без логин</span>
+    </div>
+  </section>
+
+  <!-- ── PROBLEM ─────────────────────────────────────────────────── -->
+  <section class="problem wrap" id="problem">
+    <div class="problem-head">
+      <div>
+        <div class="eyebrow bare" style="color: var(--warn)">— 01 / Проблемът</div>
+        <h2 class="display lg" style="margin-top: 14px">Внасяте коли. Хабите време в отговаряне.</h2>
+      </div>
+      <p class="lede">
+        Всеки клиент пише по Viber, обажда се вечер, пита същия въпрос за трети път.
+        Информация за колата е разпиляна в 6 чата, 2 имейла и един WhatsApp. Звучи познато?
+      </p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-num">01</div>
+        <h3 class="problem-title">„Кога пристига контейнерът?“</h3>
+        <p>Един и същи въпрос от 12 клиента, всеки ден. Никой не може да види сам докъде е стигнала колата му.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-num">02</div>
+        <h3 class="problem-title">Снимки в 5 различни чата</h3>
+        <p>Изпращате едни и същи снимки на Viber, после на Messenger, после на имейл. Качеството пада, оригиналите се губят.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-num">03</div>
+        <h3 class="problem-title">Документи на парчета</h3>
+        <p>Title, Bill of Lading, фактура от аукциона, договор — всеки документ е на различно място. Клиентът ги иска веднага.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INBOX FEATURE ───────────────────────────────────────────── -->
+  <section class="section wrap" id="features">
+    <div class="section-head">
+      <div class="section-tag">
+        <span class="num">01</span>
+        Единна входяща кутия
+      </div>
+      <h2 class="display xl">
+        Viber, WhatsApp, Messenger, имейл, телефон —
+        <span style="color: var(--ink-3)">в един прозорец.</span>
+      </h2>
+    </div>
+
+    <div class="feature-2col">
+      <div class="feat-copy">
+        <p class="lede">
+          Спрете да скачате между 5 апликации. Всички съобщения от всички канали идват тук и са привързани към конкретна кола и клиент.
+        </p>
+        <ul class="feat-list">
+          <li>
+            <span class="k">01</span>
+            <div>
+              <strong>Един линк, всички канали</strong>
+              <div class="desc">Клиентът ви пише откъдето иска — вие отговаряте от едно място.</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">02</span>
+            <div>
+              <strong>Авто-отговори за чести въпроси</strong>
+              <div class="desc">„Кога пристига?“, „Какъв е статусът?“ — линк към live проследяване с 1 клик.</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">03</span>
+            <div>
+              <strong>Цялата история на клиента</strong>
+              <div class="desc">Кои коли е питал, колко е платил, какво е обещано — никога не питайте два пъти.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mock">
+        <div class="mock-bar">
+          <span>входяща · 5 разговора</span>
+          <span class="dots"><i></i><i></i><i></i></span>
+        </div>
+        <div class="inbox">
+          <div class="inbox-list" id="inbox-list"></div>
+          <div class="inbox-thread">
+            <div class="thread-head">
+              <div>
+                <h4 id="thread-name"></h4>
+                <div class="label-mono" style="margin-top: 4px">За: <span id="thread-car"></span></div>
+              </div>
+              <span class="btn btn-ghost btn-xs">Виж картон →</span>
+            </div>
+            <div class="msg-list" id="thread-msgs"></div>
+            <form class="composer" onsubmit="event.preventDefault(); this.querySelector('input').value='';">
+              <input placeholder="Отговор към клиента — изпрати по Viber, WhatsApp, имейл…" />
+              <button type="submit" class="btn btn-primary btn-sm">Изпрати</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── AD FORM FEATURE ─────────────────────────────────────────── -->
+  <section class="section wrap" style="background: var(--bg-2); margin-top: 0">
+    <div class="section-head">
+      <div class="section-tag">
+        <span class="num">02</span>
+        Публикуване на обяви
+      </div>
+      <h2 class="display xl">
+        Обявата, която клиентът чака.
+        <span style="color: var(--ink-3)">Без 6 имейла назад-напред.</span>
+      </h2>
+    </div>
+
+    <div class="feature-2col reverse">
+      <div class="feat-copy">
+        <p class="lede">
+          Един общ формуляр за всички детайли: щета, ключове, продавач, аукцион или директна покупка, цена или диапазон, срок за доставка, локация. Веднъж — публикувано навсякъде: в сайта ви, на FB, на колаотамерика.
+        </p>
+        <ul class="feat-list">
+          <li>
+            <span class="k">→</span>
+            <div>
+              <strong>Стандартни полета за CARFAX-стил данни</strong>
+              <div class="desc">Година, пробег, двигател, ключове, статус „пали ли“ — клиентът вижда всичко без да пита.</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">→</span>
+            <div>
+              <strong>Аукцион или директна покупка</strong>
+              <div class="desc">Превключете режима — формулярът показва само релевантните полета (краен срок, текуща оферта или фиксирана цена).</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">→</span>
+            <div>
+              <strong>До 40 снимки + видео обиколка</strong>
+              <div class="desc">Оригинално качество, автоматично сортиране (екстериор, интериор, щети, табло, рама).</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">→</span>
+            <div>
+              <strong>Споделяне с 1 клик</strong>
+              <div class="desc">Линк, който можете да хвърлите в групата на Viber, FB или в имейл-кампания.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mock">
+        <div class="mock-bar">
+          <span>нова обява · чернова</span>
+          <span style="color: var(--accent)">● автоматично запазено</span>
+        </div>
+
+        <div class="ad-mock">
+          <div class="ad-form">
+            <div class="img-grid">
+              <div class="img-cell lead">фасада 3/4</div>
+              <div class="img-cell">интериор</div>
+              <div class="img-cell">табло</div>
+              <div class="img-cell">щета</div>
+              <div class="img-cell">мотор</div>
+              <div class="img-cell">рама</div>
+              <div class="img-cell">VIN</div>
+              <div class="img-cell add">
+                <span class="plus">+</span>
+                <span>добави</span>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 18px">
+              <div class="seg" id="ad-mode">
+                <button data-ad-mode="auction" class="active">Аукцион</button>
+                <button data-ad-mode="direct">Директна покупка</button>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-row"><label>Година</label><input value="2021" /></div>
+              <div class="form-row"><label>Марка</label><input value="BMW" /></div>
+              <div class="form-row"><label>Модел</label><input value="X5 xDrive40i" /></div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-row"><label>Пробег (мили)</label><input value="48 320" /></div>
+              <div class="form-row"><label>Двигател</label><input value="3.0L I6 Turbo · бензин · 335 к.с." /></div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-row">
+                <label>Ключове</label>
+                <select><option>1</option><option selected>2</option><option>Без ключ</option></select>
+              </div>
+              <div class="form-row"><label>Срок за доставка</label><input value="4–6 седмици" /></div>
+              <div class="form-row">
+                <label data-seller-label>Аукцион / лот</label>
+                <input value="Copart · Newark, NJ" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>Локация → крайна точка</label>
+              <input value="Newark, NJ → Бургас" />
+            </div>
+
+            <div class="ad-toggles-box">
+              <div class="toggle-row">
+                <div>
+                  <div class="t-label">Колата пали и се движи</div>
+                  <div class="t-sub">runs &amp; drives</div>
+                </div>
+                <button class="switch on" data-switch="running" aria-label="превключи „пали и се движи“"></button>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="t-label">Има щета</div>
+                  <div class="t-sub">damage report</div>
+                </div>
+                <button class="switch" data-switch="damage" aria-label="превключи „щета“"></button>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="t-label">Цена като диапазон</div>
+                  <div class="t-sub">price range</div>
+                </div>
+                <button class="switch on" data-switch="priceRange" aria-label="превключи „диапазон“"></button>
+              </div>
+            </div>
+
+            <div class="form-grid-2" id="price-range-fields" style="margin-top: 16px">
+              <div class="form-row"><label>Цена от (лв)</label><input value="44 500" /></div>
+              <div class="form-row"><label>Цена до (лв)</label><input value="48 900" /></div>
+            </div>
+            <div class="form-row" id="price-single-field" style="margin-top: 16px; display: none">
+              <label>Цена (лв)</label>
+              <input value="44 500" />
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap">
+              <button class="btn btn-primary btn-sm" type="button">Публикувай навсякъде →</button>
+              <button class="btn btn-ghost btn-sm" type="button">Запази чернова</button>
+            </div>
+          </div>
+
+          <aside class="ad-side">
+            <div class="label-mono" style="margin-bottom: 8px">визуализация</div>
+            <h5>2021 BMW X5 xDrive40i</h5>
+            <div class="ssub"><span data-mode-text data-auction="аукцион" data-direct="директна покупка">аукцион</span> · Newark, NJ → Бургас</div>
+
+            <div class="kv">
+              <div class="row"><div class="k">Пробег</div><div class="v">48 320 mi</div></div>
+              <div class="row"><div class="k">Двигател</div><div class="v">3.0L I6 Turbo · бензин · 335 к.с.</div></div>
+              <div class="row"><div class="k">Ключове</div><div class="v">2</div></div>
+              <div class="row">
+                <div class="k"><span data-seller-label-mini data-auction="Лот" data-direct="Продавач">Лот</span></div>
+                <div class="v">Copart · Newark, NJ</div>
+              </div>
+              <div class="row"><div class="k">Доставка</div><div class="v">4–6 седмици</div></div>
+              <div class="row"><div class="k">Пали</div><div class="v" id="preview-running" style="color: var(--accent)">Да</div></div>
+              <div class="row"><div class="k">Щета</div><div class="v" id="preview-damage" style="color: var(--ink-3)">Без</div></div>
+            </div>
+
+            <hr class="rule" style="margin: 18px 0" />
+
+            <div class="label-mono">цена</div>
+            <div class="ad-price" id="ad-price">44 500 – 48 900 <span class="cur">лв</span></div>
+            <div class="label-mono" style="margin-top: 4px">≈ 22 821 €</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CLIENT TRACKING FEATURE ─────────────────────────────────── -->
+  <section class="section wrap" id="tracking">
+    <div class="section-head">
+      <div class="section-tag">
+        <span class="num">03</span>
+        Линк за клиента
+      </div>
+      <h2 class="display xl">
+        Един линк, който отговаря на въпроса
+        <span style="color: var(--ink-3)">„къде е колата?“</span>
+      </h2>
+    </div>
+
+    <div class="feature-2col">
+      <div class="feat-copy">
+        <p class="lede">
+          На клиента давате един линк (или го споделя сам в групата с приятели). Той вижда къде е колата му в момента, кой я кара, кога ще пристигне, и всичките си документи. Без логин. Без приложение.
+        </p>
+        <ul class="feat-list">
+          <li><span class="k">→</span><div><strong>Live статус от аукциона до Бургас</strong><div class="desc">8 етапа, всеки със снимка, дата, GPS позиция и партньор-превозвач.</div></div></li>
+          <li><span class="k">→</span><div><strong>Документи на едно място</strong><div class="desc">Title, Bill of Lading, фактура от аукцион, договор, митница, регистрация — всичко в PDF.</div></div></li>
+          <li><span class="k">→</span><div><strong>Автоматични известия</strong><div class="desc">Push, Viber или имейл при всяка промяна. Клиентът спира да ви звъни.</div></div></li>
+          <li><span class="k">→</span><div><strong>По-късно: контейнер ID + митница</strong><div class="desc">Веднъж добавен номер на контейнер, проследяването е реално, в реално време.</div></div></li>
+        </ul>
+
+        <div class="share-link">
+          <span class="share-key">линк за клиент:</span>
+          <span class="share-url">koa.bg/c/x5-9821</span>
+          <button class="btn btn-ghost btn-xs" data-copy-share="koa.bg/c/x5-9821" type="button">Копирай</button>
+        </div>
+      </div>
+
+      <div class="mock">
+        <div class="mock-bar">
+          <span>клиентски изглед · koa.bg/c/x5-9821</span>
+          <span class="dots"><i></i><i></i><i></i></span>
+        </div>
+
+        <div class="tracker">
+          <div class="car-head">
+            <div class="car-thumb">фото 3/4</div>
+            <div class="car-meta">
+              <h4>2021 BMW X5 xDrive40i</h4>
+              <div class="vin">VIN · 5UXCR6C5XKLL12345</div>
+              <div class="badges">
+                <span class="badge green">пали и се движи</span>
+                <span class="badge amber">фронтална щета · лека</span>
+                <span class="badge">2 ключа</span>
+                <span class="badge">Copart NJ</span>
+              </div>
+            </div>
+            <div class="car-right">
+              <div class="price">46 500 лв</div>
+              <div class="price-note">всичко включено</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px">
+            <div class="label-mono" id="step-counter">статус · стъпка 5 от 8</div>
+            <div style="display: flex; gap: 8px">
+              <button class="btn btn-ghost btn-xs" data-step="prev" type="button">← назад</button>
+              <button class="btn btn-primary btn-xs" data-step="next" type="button">напред →</button>
+            </div>
+          </div>
+
+          <div class="timeline" id="timeline"></div>
+
+          <div class="doc-strip">
+            <div class="doc">
+              <div class="dtype">PDF · Title</div>
+              <div class="dname">title-5UXCR6C5X.pdf</div>
+              <div class="dsize">412 KB</div>
+            </div>
+            <div class="doc">
+              <div class="dtype">PDF · BoL</div>
+              <div class="dname">msc-bridge-bol.pdf</div>
+              <div class="dsize">228 KB</div>
+            </div>
+            <div class="doc">
+              <div class="dtype">PDF · Аукцион</div>
+              <div class="dname">copart-78329114.pdf</div>
+              <div class="dsize">96 KB</div>
+            </div>
+            <div class="doc placeholder">+ митница (очаква се)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMPARE TABLE ───────────────────────────────────────────── -->
+  <section class="section wrap" style="padding-top: 64px; padding-bottom: 64px">
+    <div class="section-head">
+      <div class="section-tag">
+        <span class="num">04</span>
+        Сравнение
+      </div>
+      <h2 class="display xl">Excel-ът и Viber вече не достигат.</h2>
+    </div>
+
+    <div class="compare">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40%">Възможност</th>
+            <th class="col-us" style="width: 20%">колаотамерика/crm</th>
+            <th style="width: 20%">Excel + Viber</th>
+            <th style="width: 20%">Класически CRM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="row-label">Снимки и обяви на едно място</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Viber / WhatsApp / FB в една кутия</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Линк за клиент — без логин</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Контейнер + GPS проследяване</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Документи (Title, BoL, фактури)</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Авто-публикуване във FB / сайт</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="label-mono">скоро</span></td></tr>
+          <tr><td class="row-label">Известия за етап → клиента</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">На български</td><td class="col-us"><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── FAQ ─────────────────────────────────────────────────────── -->
+  <section class="faq wrap-narrow">
+    <div style="margin-bottom: 32px">
+      <div class="eyebrow bare" style="color: var(--warn)">— Често задавани въпроси</div>
+      <h2 class="display lg" style="margin-top: 14px">Сигурно вече сте се чудили…</h2>
+    </div>
+    <div>
+      <details class="faq-item">
+        <summary>От къде идват съобщенията?<span class="plus">+</span></summary>
+        <div class="answer">Свързвате си Viber Business, WhatsApp Business, Facebook Page, имейл (IMAP/Gmail/Outlook) и SMS канал. Клиентът пише откъдето иска — вие отговаряте от едно място. Телефонни обаждания се логват автоматично с кратък преписан текст.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Може ли да публикувам обявите и на моя сайт?<span class="plus">+</span></summary>
+        <div class="answer">Да. Един и същ запис се показва на колаотамерика, на вашия сайт (чрез embed или JSON API), и автоматично се пуска като пост във Facebook бизнес страницата. Една обява, едно публикуване.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Какво вижда клиентът в линка си?<span class="plus">+</span></summary>
+        <div class="answer">Само неговата кола: снимки, етапи (от аукциона до Бургас), документи (Title, BoL, фактури), и чат с вас. Без логин, без приложение. Може да го сподели с фамилията си.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Може ли да добавяме номер на контейнер и да го проследяваме?<span class="plus">+</span></summary>
+        <div class="answer">Да. Веднъж добавен MSKU / TCLU / друг префикс, системата сама дърпа позицията на кораба от партньорска API услуга и показва ETA в реално време на клиента.</div>
+      </details>
+      <details class="faq-item">
+        <summary>На какъв език е?<span class="plus">+</span></summary>
+        <div class="answer">Изцяло на български. Шаблоните за съобщения и обявите също. Скоро — англоезичен изглед за чужди клиенти и партньори.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Колко струва?<span class="plus">+</span></summary>
+        <div class="answer">Цената зависи от обема (брой коли / месец) и броя потребители. Пишете на contact@kolaotamerika.com или поискайте демо — ще ви върнем оферта в рамките на 24 часа.</div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ───────────────────────────────────────────────── -->
+  <section class="final" id="contact">
+    <div class="wrap">
+      <div class="final-inner">
+        <div>
+          <div class="eyebrow bare" style="color: var(--warn)">— Готови да опитате?</div>
+          <h2 class="display xl" style="margin-top: 16px">
+            Внасяте над 5 коли на месец?<br />
+            Първият месец е безплатен.
+          </h2>
+          <p class="lede" style="margin-top: 18px">
+            Пишете ни в свободен текст: колко коли карате на месец, от къде ги внасяте, и кое ви боли най-много. До 24 часа ще се чуем — без обвързване, без презентация на 40 слайда.
+          </p>
+          <ul class="checklist" style="margin-top: 24px">
+            <li>30-минутно демо по Google Meet или на живо в Бургас / София</li>
+            <li>Мигрираме обявите и контактите ви безплатно</li>
+            <li>Без задължение, без месечен абонамент в първия месец</li>
+          </ul>
+        </div>
+
+        <div class="email-card">
+          <div class="label-mono">пишете ни</div>
+          <div class="email-line">
+            <a href="mailto:contact@kolaotamerika.com?subject=Демо%20заявка%20-%20колаотамерика%2Fcrm">contact@kolaotamerika.com</a>
+            <button class="copy" data-copy-email type="button">копирай</button>
+          </div>
+
+          <a class="btn btn-primary"
+             style="width: 100%; justify-content: center; padding: 14px"
+             href="mailto:contact@kolaotamerika.com?subject=Демо%20заявка%20-%20колаотамерика%2Fcrm&body=Здравейте%2C%0A%0AНие%20сме%20%5Bиме%20на%20фирма%5D.%20Внасяме%20коли%20от%20%5BСАЩ%2FКанада%2FЕвропа%2FЯпония%2FКорея%5D.%0AОбем%3A%20%5BX%5D%20коли%20на%20месец.%0AНай-голяма%20болка%3A%20%0A%0AБихме%20искали%20демо.%0A">
+            Заяви демо по имейл →
+          </a>
+
+          <hr class="rule" style="margin: 20px 0" />
+
+          <div class="label-mono" style="margin-bottom: 8px">или ни намерете</div>
+          <div style="display: grid; gap: 6px; font-size: 13px">
+            <div style="display: flex; justify-content: space-between">
+              <span style="color: var(--ink-3)">Viber Business</span>
+              <span class="mono">+359 88 ··· ···</span>
+            </div>
+            <div style="display: flex; justify-content: space-between">
+              <span style="color: var(--ink-3)">Адрес</span>
+              <span>Бургас · ул. Александровска</span>
+            </div>
+            <div style="display: flex; justify-content: space-between">
+              <span style="color: var(--ink-3)">Отговаряме до</span>
+              <span style="color: var(--accent)">24 часа</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────────────────────────── -->
+  <footer class="site-foot wrap">
+    <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap">
+      <span>© 2026 колаотамерика</span>
+      <span style="color: var(--ink-4)">·</span>
+      <a href="/">каталог</a>
+      <a href="#contact">контакт</a>
+    </div>
+    <div class="last-updated" id="last-updated">последна актуализация: 25 май 2026 г.</div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      })[c]);
+
+      // ── footer date ────────────────────────────────────────────────
+      const lu = document.getElementById("last-updated");
+      if (lu) {
+        const today = new Date().toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" });
+        lu.textContent = "последна актуализация: " + today;
+      }
+
+      // ── inbox ──────────────────────────────────────────────────────
+      const inbox = [
+        {
+          id: "i1", name: "Георги Петров", when: "сега",
+          snippet: "Може ли още снимки на гумите?",
+          channels: ["viber"], car: "BMW X5 · 2019",
+          messages: [
+            { dir: "in",  text: "Здравейте, видях обявата за X5. Може ли още снимки на гумите?", t: "14:22 · Viber" },
+            { dir: "out", text: "Здравейте! Изпратих ви линк към пълната галерия — 47 снимки, вкл. ходова и гуми.", t: "14:24 · Viber" },
+            { dir: "in",  text: "Перфектно. А кога ще е тук?", t: "14:25 · Viber" },
+            { dir: "out", text: "Контейнерът тръгва от Балтимор на 02.06. ETA Бургас — 28.06. Виждате го live тук: koa.bg/c/x5-9821", t: "14:26 · Viber" }
+          ]
+        },
+        {
+          id: "i2", name: "Дарина Стоилова", when: "12 мин",
+          snippet: "Готова ли е фактурата от аукциона?",
+          channels: ["email", "viber"], car: "Audi Q7",
+          messages: [
+            { dir: "in",  text: "Здравейте, готова ли е фактурата от аукциона за Q7?", t: "13:18 · Имейл" },
+            { dir: "out", text: "Качвам я в линка за колата ви в момента. Виж: koa.bg/c/q7-3320", t: "13:30 · Имейл" }
+          ]
+        },
+        {
+          id: "i3", name: "Емил Костов", when: "1 ч",
+          snippet: "Здравейте, видях Mustang-а…",
+          channels: ["fb"], car: "Ford Mustang",
+          messages: [
+            { dir: "in",  text: "Здравейте, видях Mustang-а в страницата ви. Има ли още такива в наличност?", t: "12:40 · Messenger" }
+          ]
+        },
+        {
+          id: "i4", name: "Илиян Радев", when: "3 ч",
+          snippet: "Container number?",
+          channels: ["email"], car: "Tesla Model Y",
+          messages: [
+            { dir: "in",  text: "Hi, can you share the container number for my Model Y?", t: "10:55 · Имейл" }
+          ]
+        },
+        {
+          id: "i5", name: "Мария Янкова", when: "вчера",
+          snippet: "Платих капарото — 4500 лв",
+          channels: ["tel", "viber"], car: "VW Tiguan",
+          messages: [
+            { dir: "out", text: "Получихме капарото, благодарим! Утре получавате официална разписка.", t: "вчера · Viber" }
+          ]
+        }
+      ];
+
+      const list = document.getElementById("inbox-list");
+      const threadName = document.getElementById("thread-name");
+      const threadCar  = document.getElementById("thread-car");
+      const threadMsgs = document.getElementById("thread-msgs");
+      let activeInbox = inbox[0].id;
+
+      function renderInboxList() {
+        list.innerHTML = inbox.map((it) => `
+          <button type="button" class="inbox-item ${it.id === activeInbox ? "active" : ""}" data-inbox-id="${esc(it.id)}">
+            <div class="name"><span>${esc(it.name)}</span><span class="when">${esc(it.when)}</span></div>
+            <div class="snippet">${esc(it.snippet)}</div>
+            <div class="channels">${it.channels.map((c) => `<span class="chan ${esc(c)}">${esc(c)}</span>`).join("")}</div>
+          </button>
+        `).join("");
+      }
+      function renderThread() {
+        const it = inbox.find((x) => x.id === activeInbox) || inbox[0];
+        threadName.textContent = it.name;
+        threadCar.textContent = it.car || "—";
+        threadMsgs.innerHTML = (it.messages || [{ dir: "in", text: it.snippet, t: it.when }]).map((m) => `
+          <div class="msg ${esc(m.dir)}">${esc(m.text)}<div class="meta">${esc(m.t)}</div></div>
+        `).join("");
+      }
+      list.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-inbox-id]");
+        if (!btn) return;
+        activeInbox = btn.dataset.inboxId;
+        renderInboxList();
+        renderThread();
+      });
+      renderInboxList();
+      renderThread();
+
+      // ── ad form: mode segment ──────────────────────────────────────
+      const adSeg = document.getElementById("ad-mode");
+      adSeg.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-ad-mode]");
+        if (!b) return;
+        adSeg.querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b));
+        const mode = b.dataset.adMode;
+        document.querySelectorAll("[data-seller-label],[data-seller-label-mini],[data-mode-text]").forEach((el) => {
+          el.textContent = el.dataset[mode];
+        });
+      });
+
+      // ── ad form: switches ──────────────────────────────────────────
+      const priceRange = document.getElementById("price-range-fields");
+      const priceSingle = document.getElementById("price-single-field");
+      const adPrice = document.getElementById("ad-price");
+      const previewRunning = document.getElementById("preview-running");
+      const previewDamage  = document.getElementById("preview-damage");
+      document.querySelectorAll("[data-switch]").forEach((sw) => {
+        sw.addEventListener("click", () => {
+          sw.classList.toggle("on");
+          const on = sw.classList.contains("on");
+          const k = sw.dataset.switch;
+          if (k === "priceRange") {
+            priceRange.style.display = on ? "" : "none";
+            priceSingle.style.display = on ? "none" : "";
+            adPrice.innerHTML = on
+              ? '44 500 – 48 900 <span class="cur">лв</span>'
+              : '44 500 <span class="cur">лв</span>';
+          } else if (k === "running") {
+            previewRunning.textContent = on ? "Да" : "Не";
+            previewRunning.style.color = on ? "var(--accent)" : "var(--warn)";
+          } else if (k === "damage") {
+            previewDamage.textContent = on ? "Да — фронтална" : "Без";
+            previewDamage.style.color = on ? "var(--warn)" : "var(--ink-3)";
+          }
+        });
+      });
+
+      // ── tracking timeline ──────────────────────────────────────────
+      const stages = [
+        { label: "Покупка",            title: "Спечелен на аукцион Copart",          desc: "Lot 78329114 · Newark, NJ · $32,400",  when: "12.05.2026" },
+        { label: "Title",              title: "Получен title документ",              desc: "Прехвърлен на колаотамерика LLC",      when: "18.05.2026" },
+        { label: "Прибиране",          title: "Колата е взета от площадката",        desc: "Транспорт CSI · до пристанище Балтимор", when: "22.05.2026" },
+        { label: "Пристанище US",      title: "Натоварена в контейнер MSKU-7234561", desc: "RoRo / shared 40' · отплаване 02.06",  when: "31.05.2026" },
+        { label: "Океан",              title: "В морето — ETA Антверпен 21.06",      desc: "MSC Bridge · vessel tracking активен", when: "сега" },
+        { label: "Пристанище EU",      title: "Разтоварване Антверпен",              desc: "Митническа обработка · ~3 дни",        when: "≈ 21.06" },
+        { label: "Сухопътен транспорт", title: "Камион към Бургас",                  desc: "Партньор: AutoTrans BG",               when: "≈ 26.06" },
+        { label: "Доставена",          title: "Готова за получаване",                desc: "Регистрация · ключове · документи",    when: "≈ 28.06" }
+      ];
+      let step = 4;
+      const tl = document.getElementById("timeline");
+      const stepCounter = document.getElementById("step-counter");
+      function renderTimeline() {
+        tl.innerHTML = stages.map((s, i) => {
+          const cls = i < step ? "done" : i === step ? "active" : "pending";
+          return `<div class="tl-step ${cls}">
+            <div>
+              <div class="label">${esc(s.label)}</div>
+              <div class="title-line">${esc(s.title)}</div>
+              <div class="desc">${esc(s.desc)}</div>
+            </div>
+            <div class="when">${esc(s.when)}</div>
+          </div>`;
+        }).join("");
+        stepCounter.textContent = `статус · стъпка ${step + 1} от ${stages.length}`;
+      }
+      document.querySelector('[data-step="prev"]').addEventListener("click", () => {
+        step = Math.max(0, step - 1); renderTimeline();
+      });
+      document.querySelector('[data-step="next"]').addEventListener("click", () => {
+        step = Math.min(stages.length - 1, step + 1); renderTimeline();
+      });
+      renderTimeline();
+
+      // ── copy buttons ───────────────────────────────────────────────
+      function flashCopied(btn, label, ms = 1800) {
+        const original = btn.textContent;
+        const wasCopied = btn.classList.contains("copied");
+        btn.classList.add("copied");
+        btn.textContent = label;
+        setTimeout(() => {
+          btn.textContent = original;
+          if (!wasCopied) btn.classList.remove("copied");
+        }, ms);
+      }
+      document.querySelectorAll("[data-copy-email]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          navigator.clipboard?.writeText("contact@kolaotamerika.com");
+          flashCopied(btn, "копирано ✓");
+        });
+      });
+      document.querySelectorAll("[data-copy-share]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          navigator.clipboard?.writeText(btn.dataset.copyShare);
+          flashCopied(btn, "копирано ✓");
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
