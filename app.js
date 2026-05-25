@@ -423,6 +423,12 @@
     attachScrollShadow();
 
     root.addEventListener("click", (e) => {
+      const openTrigger = e.target.closest("[data-modal-open]");
+      if (openTrigger) {
+        e.preventDefault();
+        showModal(openTrigger.dataset.modalOpen);
+        return;
+      }
       const sortEl = e.target.closest("[data-sort]");
       if (sortEl) { setSort(sortEl.dataset.sort); return; }
       const drawerEl = e.target.closest("[data-drawer]");
@@ -435,6 +441,33 @@
         if (row) openSourcePopover(sourceEl, COMPANY_BY_ID[row.dataset.id], sourceEl.dataset.source);
         return;
       }
+    });
+
+    // ── Modal (report) ─────────────────────────────────────────────
+    // Map of trigger id → scrim element.
+    const modalMap = { report: document.getElementById("report-modal") };
+    let activeModal = null;
+    function showModal(id) {
+      const scrim = modalMap[id];
+      if (!scrim) return;
+      scrim.hidden = false;
+      document.body.style.overflow = "hidden";
+      activeModal = scrim;
+    }
+    function hideModal(scrim) {
+      scrim.hidden = true;
+      document.body.style.overflow = "";
+      if (activeModal === scrim) activeModal = null;
+    }
+    Object.values(modalMap).forEach((scrim) => {
+      if (!scrim) return;
+      scrim.addEventListener("click", (e) => {
+        // Close only on scrim background click or on an explicit close button.
+        if (e.target === scrim || e.target.closest(".modal-close")) hideModal(scrim);
+      });
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && activeModal) hideModal(activeModal);
     });
 
     root.addEventListener("mouseover", (e) => {

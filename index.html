@@ -727,6 +727,118 @@
     }
     .drawer-dl a:hover { border-bottom-color: var(--accent); }
 
+    /* ── Report modal ──────────────────────────────────────────────────────── */
+    .modal-scrim {
+      position: fixed; inset: 0;
+      background: oklch(0.20 0.02 50 / 0.32);
+      z-index: 600;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 48px 16px;
+      overflow-y: auto;
+      animation: scrimIn .2s ease-out;
+    }
+    .modal-scrim[hidden] { display: none; }
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      width: min(560px, 100%);
+      box-shadow: var(--shadow-pop);
+      animation: modalIn .22s cubic-bezier(.2,.7,.2,1);
+      max-height: calc(100vh - 96px);
+      display: flex; flex-direction: column;
+    }
+    @keyframes modalIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-head {
+      padding: 22px 28px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 18px;
+    }
+    .modal-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: -0.015em;
+      margin: 0;
+      color: var(--ink);
+    }
+    .modal-close {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      cursor: pointer;
+      color: var(--ink-2);
+      flex-shrink: 0;
+    }
+    .modal-close:hover { background: var(--bg-2); color: var(--ink); }
+    .modal-body { padding: 24px 28px 28px; overflow-y: auto; }
+    .modal-lead { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin: 0 0 22px; }
+    .modal-section { margin-bottom: 22px; }
+    .modal-section:last-of-type { margin-bottom: 0; }
+    .modal-h3 {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin: 0 0 10px;
+    }
+    .modal-list {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: 8px;
+      font-size: 14px; color: var(--ink);
+      line-height: 1.55;
+    }
+    .modal-list li strong { font-weight: 600; }
+    .modal-kv { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .modal-kv li {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 12px;
+      align-items: baseline;
+    }
+    .modal-kv .k {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      color: var(--ink-3);
+      text-transform: uppercase;
+    }
+    .modal-kv .v { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+    .modal-actions {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line-2);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .modal-btn {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 11px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: background .15s;
+    }
+    .modal-btn:hover { background: color-mix(in oklab, var(--accent) 82%, #000); }
+    .modal-direct { font-size: 12.5px; color: var(--ink-3); text-align: center; }
+    .modal-direct .mono { font-family: var(--font-mono); color: var(--ink); }
+
     /* Responsive niceties */
     @media (max-width: 720px) {
       .hero-inner, .table-wrap, .foot-inner { padding-left: 18px; padding-right: 18px; }
@@ -2207,11 +2319,61 @@
         <div class="foot-inner">
           <div class="foot-links">
             <a class="foot-cta" href="/crm">CRM за вносители →</a>
-            <a class="foot-cta" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка">Подай вносител или поправка →</a>
+            <a class="foot-cta" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка" data-modal-open="report">Подай вносител или поправка →</a>
           </div>
           <span class="meta-pill"><span class="dot"></span> Последна актуализация: <span id="last-update">—</span></span>
         </div>
       </footer>
+
+      <div class="modal-scrim" id="report-modal" hidden>
+        <div class="modal" role="dialog" aria-labelledby="report-modal-title" aria-modal="true">
+          <header class="modal-head">
+            <div>
+              <div class="modal-eyebrow">Поддръжка на каталога</div>
+              <h2 class="modal-title" id="report-modal-title">Подай вносител или поправка</h2>
+            </div>
+            <button class="modal-close" type="button" aria-label="Затвори">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </header>
+          <div class="modal-body">
+            <p class="modal-lead">
+              Каталогът се поддържа ръчно. Ако намерите грешка или знаете вносител, който не е в списъка — пишете ни на <span class="mono">update@kolaotamerika.com</span> и ще обновим записа.
+            </p>
+
+            <section class="modal-section">
+              <h3 class="modal-h3">Какво можете да подадете</h3>
+              <ul class="modal-list">
+                <li><strong>Нов вносител</strong> — фирма, която внася коли в България, но я няма в каталога.</li>
+                <li><strong>Поправка</strong> — невалиден линк, грешен телефон, остаряло описание, преместен ЕИК.</li>
+                <li><strong>Допълване</strong> — нова Viber група, нов Facebook, добавена държава на внос.</li>
+                <li><strong>Премахване</strong> — фирма, която вече не работи или е заличена в Търговския регистър.</li>
+              </ul>
+            </section>
+
+            <section class="modal-section">
+              <h3 class="modal-h3">Какво да включите в имейла</h3>
+              <ul class="modal-kv">
+                <li><span class="k">фирма</span><span class="v">Бранд + юридическо име (ако знаете)</span></li>
+                <li><span class="k">ЕИК</span><span class="v">Ако е регистрирана в България</span></li>
+                <li><span class="k">контакти</span><span class="v">Уебсайт, телефон, имейл</span></li>
+                <li><span class="k">социални</span><span class="v">Facebook, Instagram, Viber група, YouTube, TikTok, LinkedIn, Mobile.bg, Cars.bg</span></li>
+                <li><span class="k">внос от</span><span class="v">САЩ, Канада, ЕС, Корея, Япония</span></li>
+                <li><span class="k">източник</span><span class="v">Откъде сте взели информацията — линк, скрийншот или кратко описание</span></li>
+              </ul>
+            </section>
+
+            <div class="modal-actions">
+              <a class="modal-btn" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка&body=Здравейте%2C%0A%0A%5BНов%20вносител%20%2F%20Поправка%20%2F%20Допълване%20%2F%20Премахване%5D%0A%0AФирма%3A%0AЕИК%3A%0AКонтакти%20(сайт%20%2F%20телефон%20%2F%20имейл)%3A%0AСоциални%20мрежи%3A%0AВнос%20от%3A%0AИзточник%20(линк%20или%20описание)%3A%0A%0AБлагодаря!">
+                Отвори имейл клиент →
+              </a>
+              <div class="modal-direct">или директно на <span class="mono">update@kolaotamerika.com</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2260,80 +2422,80 @@
   </script>
 
   <script id="app-bundle">
-(()=>{"use strict";const T=JSON.parse(document.getElementById("company-data").textContent),B=Object.fromEntries(T.map(o=>[o.id,o])),U=[{id:"info_amount",label:"Количество информация",short:"Инф.",group:"Основни",type:"info"},{id:"registered",label:"Регистрирана фирма",short:"Фирма",group:"Основни",type:"company"},{id:"website",label:"Уебсайт",short:"Сайт",group:"Основни",type:"url"},{id:"email",label:"Имейл",short:"Имейл",group:"Основни",type:"email"},{id:"phone",label:"Телефон за връзка",short:"Тел.",group:"Основни",type:"phone"},{id:"viber",label:"Viber група",short:"Viber",group:"Основни",type:"url"},{id:"source_usa",label:"Внос от САЩ",short:"САЩ",group:"Внася от",type:"value"},{id:"source_ca",label:"Внос от Канада",short:"CA",group:"Внася от",type:"value"},{id:"source_eu",label:"Внос от ЕС",short:"EU",group:"Внася от",type:"value"},{id:"source_kr",label:"Внос от Корея",short:"KR",group:"Внася от",type:"value"},{id:"source_jp",label:"Внос от Япония",short:"JP",group:"Внася от",type:"value"},{id:"facebook",label:"Facebook страница",short:"FB",group:"Други канали",type:"url"},{id:"instagram",label:"Instagram",short:"IG",group:"Други канали",type:"url"},{id:"youtube",label:"YouTube канал",short:"YT",group:"Други канали",type:"url"},{id:"tiktok",label:"TikTok",short:"TT",group:"Други канали",type:"url"},{id:"mobile_bg",label:"Витрина в Mobile.bg",short:"Mobile",group:"Други канали",type:"url"},{id:"cars_bg",label:"Профил в Cars.bg",short:"Cars",group:"Други канали",type:"url"}],I={USA:"САЩ",CA:"Канада",EU:"ЕС",KR:"Корея",JP:"Япония"},q={USA:"🇺🇸",CA:"🇨🇦",EU:"🇪🇺",KR:"🇰🇷",JP:"🇯🇵"},R=["registered","website","email","phone","viber"],m={check:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',dash:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',ext:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5H9.5V7.5M9.5 2.5L5 7M3 4.5V9H7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',copy:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 7.5V2.5C2 2.22 2.22 2 2.5 2H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',close:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',sortAsc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 1.5L7 6H1L4 1.5Z" fill="currentColor"/></svg>',sortDesc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 8.5L1 4H7L4 8.5Z" fill="currentColor"/></svg>'},s=o=>String(o??"").replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e]),j=document.getElementById("last-update");j&&(j.textContent=new Date().toLocaleDateString("bg-BG",{day:"numeric",month:"long",year:"numeric"}));let w={col:"info_amount",dir:"desc"};function W(o){const e=R.filter(t=>o.values[t]).length;return Math.round(e/R.length*100)}function K(){const{col:o,dir:e}=w,t=a=>o==="name"?a.name:o==="info_amount"?W(a):a.values[o]?1:0;return[...T].sort((a,r)=>{const n=t(a),h=t(r);let p=typeof n=="string"?n.localeCompare(h,"bg"):n-h;return e==="desc"&&(p=-p),p===0&&o==="info_amount"&&(p=(r.values.registered?1:0)-(a.values.registered?1:0)),p===0&&(p=a.name.localeCompare(r.name,"bg")),p}).map(a=>a.id)}function F(){const o=document.getElementById("tbody");if(!o)return;const e=Object.fromEntries(Array.from(o.querySelectorAll(".bodyrow")).map(t=>[t.dataset.id,t]));K().forEach((t,a)=>{const r=e[t];if(!r)return;o.appendChild(r);const n=r.querySelector(".rank");n&&(n.textContent=String(a+1).padStart(2,"0"))}),V()}function V(){document.querySelectorAll(".head-sortable").forEach(o=>{const e=o.dataset.sort===w.col;o.classList.toggle("head-sort-active",e),o.setAttribute("aria-sort",e?w.dir==="asc"?"ascending":"descending":"none");const t=o.querySelector(".sort-arrow-slot");t&&(t.innerHTML=e?w.dir==="asc"?m.sortAsc:m.sortDesc:"")})}function Y(o){w.col===o?w={col:o,dir:w.dir==="asc"?"desc":"asc"}:w={col:o,dir:o==="name"?"asc":"desc"},F()}let x=null;function D(o){M();const e=B[o];if(!e)return;const t=e.values.registered,a=[...new Set(U.map(i=>i.group))],r=e.sources.length?e.sources.map(i=>I[i]||i).join(", "):"—",n=e.group?e.isGroupHead?`Глава на групата ${e.group}`:`От групата ${e.group}`:e.legalRaw&&/^\(/.test(e.legalRaw)?e.legalRaw:"",h=t?`<section class="drawer-section">
+(()=>{"use strict";const A=JSON.parse(document.getElementById("company-data").textContent),B=Object.fromEntries(A.map(t=>[t.id,t])),I=[{id:"info_amount",label:"Количество информация",short:"Инф.",group:"Основни",type:"info"},{id:"registered",label:"Регистрирана фирма",short:"Фирма",group:"Основни",type:"company"},{id:"website",label:"Уебсайт",short:"Сайт",group:"Основни",type:"url"},{id:"email",label:"Имейл",short:"Имейл",group:"Основни",type:"email"},{id:"phone",label:"Телефон за връзка",short:"Тел.",group:"Основни",type:"phone"},{id:"viber",label:"Viber група",short:"Viber",group:"Основни",type:"url"},{id:"source_usa",label:"Внос от САЩ",short:"САЩ",group:"Внася от",type:"value"},{id:"source_ca",label:"Внос от Канада",short:"CA",group:"Внася от",type:"value"},{id:"source_eu",label:"Внос от ЕС",short:"EU",group:"Внася от",type:"value"},{id:"source_kr",label:"Внос от Корея",short:"KR",group:"Внася от",type:"value"},{id:"source_jp",label:"Внос от Япония",short:"JP",group:"Внася от",type:"value"},{id:"facebook",label:"Facebook страница",short:"FB",group:"Други канали",type:"url"},{id:"instagram",label:"Instagram",short:"IG",group:"Други канали",type:"url"},{id:"youtube",label:"YouTube канал",short:"YT",group:"Други канали",type:"url"},{id:"tiktok",label:"TikTok",short:"TT",group:"Други канали",type:"url"},{id:"mobile_bg",label:"Витрина в Mobile.bg",short:"Mobile",group:"Други канали",type:"url"},{id:"cars_bg",label:"Профил в Cars.bg",short:"Cars",group:"Други канали",type:"url"}],U={USA:"САЩ",CA:"Канада",EU:"ЕС",KR:"Корея",JP:"Япония"},q={USA:"🇺🇸",CA:"🇨🇦",EU:"🇪🇺",KR:"🇰🇷",JP:"🇯🇵"},R=["registered","website","email","phone","viber"],y={check:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',dash:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',ext:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5H9.5V7.5M9.5 2.5L5 7M3 4.5V9H7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',copy:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 7.5V2.5C2 2.22 2.22 2 2.5 2H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',close:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',sortAsc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 1.5L7 6H1L4 1.5Z" fill="currentColor"/></svg>',sortDesc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 8.5L1 4H7L4 8.5Z" fill="currentColor"/></svg>'},r=t=>String(t??"").replace(/[&<>"']/g,o=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[o]),j=document.getElementById("last-update");j&&(j.textContent=new Date().toLocaleDateString("bg-BG",{day:"numeric",month:"long",year:"numeric"}));let k={col:"info_amount",dir:"desc"};function W(t){const o=R.filter(e=>t.values[e]).length;return Math.round(o/R.length*100)}function K(){const{col:t,dir:o}=k,e=i=>t==="name"?i.name:t==="info_amount"?W(i):i.values[t]?1:0;return[...A].sort((i,n)=>{const s=e(i),a=e(n);let d=typeof s=="string"?s.localeCompare(a,"bg"):s-a;return o==="desc"&&(d=-d),d===0&&t==="info_amount"&&(d=(n.values.registered?1:0)-(i.values.registered?1:0)),d===0&&(d=i.name.localeCompare(n.name,"bg")),d}).map(i=>i.id)}function F(){const t=document.getElementById("tbody");if(!t)return;const o=Object.fromEntries(Array.from(t.querySelectorAll(".bodyrow")).map(e=>[e.dataset.id,e]));K().forEach((e,i)=>{const n=o[e];if(!n)return;t.appendChild(n);const s=n.querySelector(".rank");s&&(s.textContent=String(i+1).padStart(2,"0"))}),V()}function V(){document.querySelectorAll(".head-sortable").forEach(t=>{const o=t.dataset.sort===k.col;t.classList.toggle("head-sort-active",o),t.setAttribute("aria-sort",o?k.dir==="asc"?"ascending":"descending":"none");const e=t.querySelector(".sort-arrow-slot");e&&(e.innerHTML=o?k.dir==="asc"?y.sortAsc:y.sortDesc:"")})}function Y(t){k.col===t?k={col:t,dir:k.dir==="asc"?"desc":"asc"}:k={col:t,dir:t==="name"?"asc":"desc"},F()}let x=null;function D(t){M();const o=B[t];if(!o)return;const e=o.values.registered,i=[...new Set(I.map(l=>l.group))],n=o.sources.length?o.sources.map(l=>U[l]||l).join(", "):"—",s=o.group?o.isGroupHead?`Глава на групата ${o.group}`:`От групата ${o.group}`:o.legalRaw&&/^\(/.test(o.legalRaw)?o.legalRaw:"",a=e?`<section class="drawer-section">
       <h3 class="drawer-h3">Юридическо лице</h3>
       <dl class="drawer-dl">
-        <div><dt>Име</dt><dd class="mono">${s(t.name)}</dd></div>
-        <div><dt>ЕИК</dt><dd class="mono">${t.eikUrl?`<a href="${s(t.eikUrl)}" target="_blank" rel="noopener noreferrer">${s(t.eik)}</a>`:s(t.eik)}</dd></div>
-        <div><dt>Регистрирана</dt><dd class="mono">${s(t.date)}</dd></div>
-        <div><dt>Седалище</dt><dd>${s(t.address)}</dd></div>
-        ${t.owner?`<div><dt>Собственост</dt><dd>${s(t.owner)}</dd></div>`:""}
-        ${t.capital?`<div><dt>Капитал</dt><dd>${s(t.capital)}</dd></div>`:""}
+        <div><dt>Име</dt><dd class="mono">${r(e.name)}</dd></div>
+        <div><dt>ЕИК</dt><dd class="mono">${e.eikUrl?`<a href="${r(e.eikUrl)}" target="_blank" rel="noopener noreferrer">${r(e.eik)}</a>`:r(e.eik)}</dd></div>
+        <div><dt>Регистрирана</dt><dd class="mono">${r(e.date)}</dd></div>
+        <div><dt>Седалище</dt><dd>${r(e.address)}</dd></div>
+        ${e.owner?`<div><dt>Собственост</dt><dd>${r(e.owner)}</dd></div>`:""}
+        ${e.capital?`<div><dt>Капитал</dt><dd>${r(e.capital)}</dd></div>`:""}
       </dl>
-      ${t.eikUrl?`<a class="po-link" href="${s(t.eikUrl)}" target="_blank" rel="noopener noreferrer" style="margin-top:12px">Виж в Търговския регистър ${m.ext}</a>`:""}
-    </section>`:"",p=e.blurb?`<section class="drawer-section">
+      ${e.eikUrl?`<a class="po-link" href="${r(e.eikUrl)}" target="_blank" rel="noopener noreferrer" style="margin-top:12px">Виж в Търговския регистър ${y.ext}</a>`:""}
+    </section>`:"",d=o.blurb?`<section class="drawer-section">
       <h3 class="drawer-h3">Бележки</h3>
-      <p class="drawer-blurb">${s(e.blurb)}</p>
-    </section>`:"";function $(i){const d=e.values[i.id],S=d?"yes":"no",c=S==="yes"?m.check:m.dash;let f="";if(S==="yes"&&i.type!=="value"){const A=d.display||d.value||d.name||"Да";i.type==="url"&&d.value?f=`<span class="drawer-li-value"><a href="${s(d.value)}" target="_blank" rel="noopener noreferrer" title="${s(d.value)}">Отвори ↗</a></span>`:i.type==="email"&&d.value?f=`<span class="drawer-li-value"><a href="mailto:${s(d.value)}">${s(A)}</a></span>`:i.type==="phone"&&d.value?f=`<span class="drawer-li-value"><a href="tel:${d.value.replace(/[^+\d]/g,"")}">${s(A)}</a></span>`:i.type==="company"&&d.eikUrl?f=`<span class="drawer-li-value"><a href="${s(d.eikUrl)}" target="_blank" rel="noopener noreferrer">${s(A)}</a></span>`:f=`<span class="drawer-li-value">${s(A)}</span>`}return`<li class="drawer-li ${S}">
-        <span class="drawer-li-mark">${c}</span>
-        <span class="drawer-li-label">${s(i.label)}</span>
-        ${f}
-      </li>`}const y=a.map(i=>`<section class="drawer-section">
-      <h3 class="drawer-h3">${s(i)}</h3>
-      <ul class="drawer-list">${U.filter(d=>d.group===i&&d.type!=="info").map($).join("")}</ul>
-    </section>`).join(""),C=encodeURIComponent("Поправка: "+e.name+" ("+e.id+")"),u=encodeURIComponent(`Здравейте,
+      <p class="drawer-blurb">${r(o.blurb)}</p>
+    </section>`:"";function w(l){const p=o.values[l.id],S=p?"yes":"no",v=S==="yes"?y.check:y.dash;let b="";if(S==="yes"&&l.type!=="value"){const T=p.display||p.value||p.name||"Да";l.type==="url"&&p.value?b=`<span class="drawer-li-value"><a href="${r(p.value)}" target="_blank" rel="noopener noreferrer" title="${r(p.value)}">Отвори ↗</a></span>`:l.type==="email"&&p.value?b=`<span class="drawer-li-value"><a href="mailto:${r(p.value)}">${r(T)}</a></span>`:l.type==="phone"&&p.value?b=`<span class="drawer-li-value"><a href="tel:${p.value.replace(/[^+\d]/g,"")}">${r(T)}</a></span>`:l.type==="company"&&p.eikUrl?b=`<span class="drawer-li-value"><a href="${r(p.eikUrl)}" target="_blank" rel="noopener noreferrer">${r(T)}</a></span>`:b=`<span class="drawer-li-value">${r(T)}</span>`}return`<li class="drawer-li ${S}">
+        <span class="drawer-li-mark">${v}</span>
+        <span class="drawer-li-label">${r(l.label)}</span>
+        ${b}
+      </li>`}const g=i.map(l=>`<section class="drawer-section">
+      <h3 class="drawer-h3">${r(l)}</h3>
+      <ul class="drawer-list">${I.filter(p=>p.group===l&&p.type!=="info").map(w).join("")}</ul>
+    </section>`).join(""),f=encodeURIComponent("Поправка: "+o.name+" ("+o.id+")"),c=encodeURIComponent(`Здравейте,
 
-Искам да подам следната актуализация за `+e.name+(e.eik?" (ЕИК "+e.eik+")":"")+`:
+Искам да подам следната актуализация за `+o.name+(o.eik?" (ЕИК "+o.eik+")":"")+`:
 
 [опишете промяната тук]
 
 Източник на информацията:
 [линк или описание]
 
-Благодаря!`),v=`<section class="drawer-section drawer-report">
+Благодаря!`),h=`<section class="drawer-section drawer-report">
       <h3 class="drawer-h3">Подай поправка</h3>
       <p class="drawer-report-lead">Видяхте грешка или липсваща информация? Изпратете я и ще обновим записа.</p>
-      <a class="po-link" href="mailto:update@kolaotamerika.com?subject=${C}&body=${u}">Изпрати имейл до update@kolaotamerika.com ${m.ext}</a>
-    </section>`,l=document.createElement("div");l.className="drawer-scrim",l.innerHTML=`<aside class="drawer">
+      <a class="po-link" href="mailto:update@kolaotamerika.com?subject=${f}&body=${c}">Изпрати имейл до update@kolaotamerika.com ${y.ext}</a>
+    </section>`,u=document.createElement("div");u.className="drawer-scrim",u.innerHTML=`<aside class="drawer">
       <header class="drawer-head">
         <div>
           <div class="drawer-eyebrow">Профил на вносител</div>
-          <h2 class="drawer-title">${s(e.name)}</h2>
-          ${n?`<div class="drawer-tagline">${s(n)}</div>`:""}
+          <h2 class="drawer-title">${r(o.name)}</h2>
+          ${s?`<div class="drawer-tagline">${r(s)}</div>`:""}
         </div>
-        <button class="drawer-close" aria-label="Затвори">${m.close}</button>
+        <button class="drawer-close" aria-label="Затвори">${y.close}</button>
       </header>
       <div class="drawer-stats">
-        <div class="stat"><div class="stat-k">Седалище</div><div class="stat-v">${s(e.location)}</div></div>
-        <div class="stat"><div class="stat-k">Основана</div><div class="stat-v">${s(e.founded||"—")}</div></div>
-        <div class="stat"><div class="stat-k">Внася от</div><div class="stat-v">${s(r)}</div></div>
-        <div class="stat"><div class="stat-k">Капитал</div><div class="stat-v">${s(e.capitalText||"—")}</div></div>
+        <div class="stat"><div class="stat-k">Седалище</div><div class="stat-v">${r(o.location)}</div></div>
+        <div class="stat"><div class="stat-k">Основана</div><div class="stat-v">${r(o.founded||"—")}</div></div>
+        <div class="stat"><div class="stat-k">Внася от</div><div class="stat-v">${r(n)}</div></div>
+        <div class="stat"><div class="stat-k">Капитал</div><div class="stat-v">${r(o.capitalText||"—")}</div></div>
       </div>
+      ${a}
+      ${d}
+      ${g}
       ${h}
-      ${p}
-      ${y}
-      ${v}
-    </aside>`,document.body.appendChild(l),document.body.style.overflow="hidden",l.querySelector(".drawer").addEventListener("click",i=>i.stopPropagation()),l.addEventListener("click",M),l.querySelector(".drawer-close").addEventListener("click",M);const b=i=>{i.key==="Escape"&&M()};document.addEventListener("keydown",b),x=()=>{document.removeEventListener("keydown",b),l.remove(),document.body.style.overflow="",x=null}}function M(){x&&x()}let L=null;function G(o,e){k();const t=e.values.registered;if(!t)return;const a=[["Юридическо име",t.name,!0,!1],["ЕИК",t.eik,!0,!0],["Регистрирана",t.date,!0,!1],["Седалище",t.address,!1,!1],t.owner&&["Собственост",t.owner,!1,!1],t.capital&&["Капитал",t.capital,!1,!1]].filter(Boolean),r=document.createElement("div");r.className="popover",r.setAttribute("role","dialog"),r.innerHTML=`<div class="po-head">
+    </aside>`,document.body.appendChild(u),document.body.style.overflow="hidden",u.querySelector(".drawer").addEventListener("click",l=>l.stopPropagation()),u.addEventListener("click",M),u.querySelector(".drawer-close").addEventListener("click",M);const $=l=>{l.key==="Escape"&&M()};document.addEventListener("keydown",$),x=()=>{document.removeEventListener("keydown",$),u.remove(),document.body.style.overflow="",x=null}}function M(){x&&x()}let C=null;function G(t,o){E();const e=o.values.registered;if(!e)return;const i=[["Юридическо име",e.name,!0,!1],["ЕИК",e.eik,!0,!0],["Регистрирана",e.date,!0,!1],["Седалище",e.address,!1,!1],e.owner&&["Собственост",e.owner,!1,!1],e.capital&&["Капитал",e.capital,!1,!1]].filter(Boolean),n=document.createElement("div");n.className="popover",n.setAttribute("role","dialog"),n.innerHTML=`<div class="po-head">
       <span class="po-eyebrow">Основни</span>
       <span class="po-title">Регистрирана фирма</span>
     </div>
     <div class="po-body">
-      ${a.map(([v,l,E,b])=>`<div class="po-row">
-        <div class="po-row-k">${s(v)}</div>
-        <div class="po-row-v ${E?"mono":""}">
-          <span>${s(l)}</span>
-          ${b?`<button class="po-copy" data-copy="${s(l)}" title="Копирай">${m.copy}</button>`:""}
+      ${i.map(([h,u,L,$])=>`<div class="po-row">
+        <div class="po-row-k">${r(h)}</div>
+        <div class="po-row-v ${L?"mono":""}">
+          <span>${r(u)}</span>
+          ${$?`<button class="po-copy" data-copy="${r(u)}" title="Копирай">${y.copy}</button>`:""}
         </div>
       </div>`).join("")}
-      ${t.eikUrl?`<a class="po-link" href="${s(t.eikUrl)}" target="_blank" rel="noopener noreferrer">Виж в Търговския регистър ${m.ext}</a>`:""}
-    </div>`,document.body.appendChild(r);const n=o.getBoundingClientRect(),h=r.offsetWidth,p=r.offsetHeight;let $=n.left+n.width/2-h/2;$=Math.max(12,Math.min($,window.innerWidth-h-12));let y=n.bottom+8;y+p>window.innerHeight-12&&(y=n.top-p-8),r.style.top=y+"px",r.style.left=$+"px",r.addEventListener("click",v=>{const l=v.target.closest("[data-copy]");if(l){navigator.clipboard?.writeText(l.dataset.copy);const E=l.innerHTML;l.textContent="Копирано",setTimeout(()=>{l.innerHTML=E},1400)}});const C=v=>{!r.contains(v.target)&&!o.contains(v.target)&&k()},u=v=>{v.key==="Escape"&&k()};document.addEventListener("mousedown",C),document.addEventListener("keydown",u),L=()=>{document.removeEventListener("mousedown",C),document.removeEventListener("keydown",u),r.remove(),L=null}}function k(){L&&L()}function J(o,e,t){k();const a=I[t]||t,r=q[t]||"",n=T.filter(c=>c.sources.includes(t)),h=n.some(c=>c.id===e.id),p=n.filter(c=>c.id!==e.id),$=h?`<strong>${s(e.name)}</strong> внася от ${s(a)}.`+(p.length?` Други вносители (${p.length}):`:""):`<strong>${s(e.name)}</strong> не декларира внос от ${s(a)}.`+(n.length?` Други вносители от ${s(a)} (${n.length}):`:""),y=h?p:n,C=y.length?`<ul class="po-co-list">${y.map(c=>`<li><button class="po-co-btn" data-drawer="${s(c.id)}">${s(c.name)}</button></li>`).join("")}</ul>`:"",u=document.createElement("div");u.className="popover popover-source",u.setAttribute("role","dialog"),u.innerHTML=`<div class="po-head">
+      ${e.eikUrl?`<a class="po-link" href="${r(e.eikUrl)}" target="_blank" rel="noopener noreferrer">Виж в Търговския регистър ${y.ext}</a>`:""}
+    </div>`,document.body.appendChild(n);const s=t.getBoundingClientRect(),a=n.offsetWidth,d=n.offsetHeight;let w=s.left+s.width/2-a/2;w=Math.max(12,Math.min(w,window.innerWidth-a-12));let g=s.bottom+8;g+d>window.innerHeight-12&&(g=s.top-d-8),n.style.top=g+"px",n.style.left=w+"px",n.addEventListener("click",h=>{const u=h.target.closest("[data-copy]");if(u){navigator.clipboard?.writeText(u.dataset.copy);const L=u.innerHTML;u.textContent="Копирано",setTimeout(()=>{u.innerHTML=L},1400)}});const f=h=>{!n.contains(h.target)&&!t.contains(h.target)&&E()},c=h=>{h.key==="Escape"&&E()};document.addEventListener("mousedown",f),document.addEventListener("keydown",c),C=()=>{document.removeEventListener("mousedown",f),document.removeEventListener("keydown",c),n.remove(),C=null}}function E(){C&&C()}function J(t,o,e){E();const i=U[e]||e,n=q[e]||"",s=A.filter(v=>v.sources.includes(e)),a=s.some(v=>v.id===o.id),d=s.filter(v=>v.id!==o.id),w=a?`<strong>${r(o.name)}</strong> внася от ${r(i)}.`+(d.length?` Други вносители (${d.length}):`:""):`<strong>${r(o.name)}</strong> не декларира внос от ${r(i)}.`+(s.length?` Други вносители от ${r(i)} (${s.length}):`:""),g=a?d:s,f=g.length?`<ul class="po-co-list">${g.map(v=>`<li><button class="po-co-btn" data-drawer="${r(v.id)}">${r(v.name)}</button></li>`).join("")}</ul>`:"",c=document.createElement("div");c.className="popover popover-source",c.setAttribute("role","dialog"),c.innerHTML=`<div class="po-head">
       <span class="po-eyebrow">Внася от</span>
-      <span class="po-title">${r} ${s(a)}</span>
+      <span class="po-title">${n} ${r(i)}</span>
     </div>
     <div class="po-body">
-      <p class="po-lead">${$}</p>
-      ${C}
-    </div>`,document.body.appendChild(u);const v=o.getBoundingClientRect(),l=u.offsetWidth,E=u.offsetHeight;let b=v.left+v.width/2-l/2;b=Math.max(12,Math.min(b,window.innerWidth-l-12));let i=v.bottom+8;i+E>window.innerHeight-12&&(i=v.top-E-8),u.style.top=i+"px",u.style.left=b+"px",u.addEventListener("click",c=>{const f=c.target.closest("[data-drawer]");f&&(k(),D(f.dataset.drawer))});const d=c=>{!u.contains(c.target)&&!o.contains(c.target)&&k()},S=c=>{c.key==="Escape"&&k()};document.addEventListener("mousedown",d),document.addEventListener("keydown",S),L=()=>{document.removeEventListener("mousedown",d),document.removeEventListener("keydown",S),u.remove(),L=null}}let g=null,_=null,H=null;function O(o){const e=o.dataset.tip;e&&(clearTimeout(_),H=o,_=setTimeout(()=>{if(H!==o)return;const t=o.getBoundingClientRect();g||(g=document.createElement("span"),g.className="tooltip",g.setAttribute("role","tooltip"),document.body.appendChild(g)),g.textContent=e,g.style.top=t.top-8+"px",g.style.left=t.left+t.width/2+"px",g.style.display=""},220))}function P(){clearTimeout(_),H=null,g&&(g.style.display="none")}function Z(){const o=document.querySelector(".table-scroll");if(!o)return;const e=()=>{o.classList.toggle("is-scrolled",o.scrollLeft>2),o.classList.toggle("is-end",o.scrollLeft+o.clientWidth>=o.scrollWidth-2)};o.addEventListener("scroll",e,{passive:!0}),e()}function N(){const o=document.getElementById("root");Z(),o.addEventListener("click",e=>{const t=e.target.closest("[data-sort]");if(t){Y(t.dataset.sort);return}const a=e.target.closest("[data-drawer]");if(a){D(a.dataset.drawer);return}const r=e.target.closest("[data-pop]");if(r){G(r,B[r.dataset.pop]);return}const n=e.target.closest("[data-source]");if(n){const h=n.closest(".bodyrow[data-id]");h&&J(n,B[h.dataset.id],n.dataset.source);return}}),o.addEventListener("mouseover",e=>{const t=e.target.closest("[data-tip]");t&&O(t)}),o.addEventListener("mouseout",e=>{e.target.closest("[data-tip]")&&P()}),o.addEventListener("focusin",e=>{const t=e.target.closest("[data-tip]");t&&O(t)}),o.addEventListener("focusout",P)}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",N):N()})();
+      <p class="po-lead">${w}</p>
+      ${f}
+    </div>`,document.body.appendChild(c);const h=t.getBoundingClientRect(),u=c.offsetWidth,L=c.offsetHeight;let $=h.left+h.width/2-u/2;$=Math.max(12,Math.min($,window.innerWidth-u-12));let l=h.bottom+8;l+L>window.innerHeight-12&&(l=h.top-L-8),c.style.top=l+"px",c.style.left=$+"px",c.addEventListener("click",v=>{const b=v.target.closest("[data-drawer]");b&&(E(),D(b.dataset.drawer))});const p=v=>{!c.contains(v.target)&&!t.contains(v.target)&&E()},S=v=>{v.key==="Escape"&&E()};document.addEventListener("mousedown",p),document.addEventListener("keydown",S),C=()=>{document.removeEventListener("mousedown",p),document.removeEventListener("keydown",S),c.remove(),C=null}}let m=null,_=null,H=null;function O(t){const o=t.dataset.tip;o&&(clearTimeout(_),H=t,_=setTimeout(()=>{if(H!==t)return;const e=t.getBoundingClientRect();m||(m=document.createElement("span"),m.className="tooltip",m.setAttribute("role","tooltip"),document.body.appendChild(m)),m.textContent=o,m.style.top=e.top-8+"px",m.style.left=e.left+e.width/2+"px",m.style.display=""},220))}function P(){clearTimeout(_),H=null,m&&(m.style.display="none")}function Z(){const t=document.querySelector(".table-scroll");if(!t)return;const o=()=>{t.classList.toggle("is-scrolled",t.scrollLeft>2),t.classList.toggle("is-end",t.scrollLeft+t.clientWidth>=t.scrollWidth-2)};t.addEventListener("scroll",o,{passive:!0}),o()}function N(){const t=document.getElementById("root");Z(),t.addEventListener("click",s=>{const a=s.target.closest("[data-modal-open]");if(a){s.preventDefault(),i(a.dataset.modalOpen);return}const d=s.target.closest("[data-sort]");if(d){Y(d.dataset.sort);return}const w=s.target.closest("[data-drawer]");if(w){D(w.dataset.drawer);return}const g=s.target.closest("[data-pop]");if(g){G(g,B[g.dataset.pop]);return}const f=s.target.closest("[data-source]");if(f){const c=f.closest(".bodyrow[data-id]");c&&J(f,B[c.dataset.id],f.dataset.source);return}});const o={report:document.getElementById("report-modal")};let e=null;function i(s){const a=o[s];a&&(a.hidden=!1,document.body.style.overflow="hidden",e=a)}function n(s){s.hidden=!0,document.body.style.overflow="",e===s&&(e=null)}Object.values(o).forEach(s=>{s&&s.addEventListener("click",a=>{(a.target===s||a.target.closest(".modal-close"))&&n(s)})}),document.addEventListener("keydown",s=>{s.key==="Escape"&&e&&n(e)}),t.addEventListener("mouseover",s=>{const a=s.target.closest("[data-tip]");a&&O(a)}),t.addEventListener("mouseout",s=>{s.target.closest("[data-tip]")&&P()}),t.addEventListener("focusin",s=>{const a=s.target.closest("[data-tip]");a&&O(a)}),t.addEventListener("focusout",P)}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",N):N()})();
 
   </script>
 
