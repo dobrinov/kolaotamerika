@@ -821,6 +821,17 @@
       .top-nav { display: none; }
       .drawer-stats { grid-template-columns: repeat(2, 1fr); }
       .drawer-stats .stat:nth-child(2) { border-right: 0; }
+      /* Drop sticky columns on phones — the scroll-trap of fixed columns
+         is uncomfortable on small screens, and the table is already
+         horizontally scrollable as a whole. */
+      .sticky-col,
+      .endcell,
+      .head-end,
+      .ghead-end { position: static; }
+      .table-scroll.with-shadow .sticky-col::after,
+      .table-scroll.with-shadow .endcell::before,
+      .table-scroll.with-shadow .head-end::before,
+      .table-scroll.with-shadow .ghead-end::before { display: none; }
     }
   </style>
 
