@@ -847,10 +847,17 @@
       /* Drop the horizontally-sticky columns on phones — the scroll-trap
          is uncomfortable on small screens. Sticky thead rows stay so the
          column labels remain visible while scrolling vertically. */
-      .sticky-col,
-      .endcell,
-      .head-end,
-      .ghead-end { position: static; }
+      .bodyrow .namecell.sticky-col,
+      .bodyrow .endcell { position: static; }
+      /* Header cells: keep position:sticky (for vertical stickiness via the
+         .headrow .head and .grouprow .ghead rules) but kill the left:0 /
+         right:0 anchors so they scroll horizontally with the rest of the
+         table. Otherwise the first/last column stays glued to the viewport
+         edge while the body scrolls behind it. */
+      .headrow .head.sticky-col,
+      .grouprow .ghead.sticky-col { left: auto; }
+      .headrow .head-end,
+      .grouprow .ghead-end { right: auto; }
       .table-scroll.with-shadow .sticky-col::after,
       .table-scroll.with-shadow .endcell::before,
       .table-scroll.with-shadow .head-end::before,
