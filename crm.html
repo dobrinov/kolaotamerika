@@ -316,8 +316,7 @@
       font-size: 12px; color: var(--ink-3);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .inbox-item .channels { display: flex; gap: 4px; margin-top: 4px; }
-    .chan {
+    .inbox-item .car-tag {
       font-family: var(--mono);
       font-size: 9px; letter-spacing: 0.08em;
       padding: 2px 6px;
@@ -325,11 +324,9 @@
       background: var(--bg-3);
       color: var(--ink-2);
       text-transform: uppercase;
+      margin-top: 4px;
+      align-self: start;
     }
-    .chan.viber { background: #e7dcef; color: #4f3667; }
-    .chan.fb    { background: #d6e0f0; color: #2b4a7a; }
-    .chan.tel   { background: #e2dcd0; color: #4f4636; }
-    .chan.email { background: #e2e7dc; color: #4a5c3a; }
 
     .inbox-thread { padding: 24px; display: flex; flex-direction: column; }
     .thread-head {
@@ -802,43 +799,6 @@
     .share-link .share-key { color: var(--ink-3); }
     .share-link .share-url { color: var(--ink); }
 
-    /* ── compare ───────────────────────────────────────────────────── */
-    .compare {
-      border-top: 1px solid var(--rule);
-      border-bottom: 1px solid var(--rule);
-      margin: 32px 0 0;
-      overflow-x: auto;
-    }
-    .compare table { width: 100%; border-collapse: collapse; min-width: 720px; }
-    .compare th, .compare td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid var(--rule);
-      vertical-align: middle;
-    }
-    .compare thead th {
-      font-family: var(--mono);
-      font-size: 10px; letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--ink-3);
-      font-weight: 500;
-      background: var(--bg-2);
-    }
-    .compare td.row-label { font-weight: 500; font-size: 14px; width: 36%; }
-    .compare td .yes,
-    .compare td .no {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      display: inline-flex; align-items: center; justify-content: center;
-      font-family: var(--mono);
-      font-weight: 700; font-size: 12px;
-    }
-    .compare td .yes { background: var(--accent-soft); color: #3f6840; }
-    .compare td .no  { background: var(--bg-3); color: var(--ink-4); }
-    .compare td.col-us { background: var(--paper); }
-    .compare th.col-us { background: var(--ink); color: var(--paper); }
-    .compare th.col-us::before { content: "★"; margin-right: 8px; color: var(--accent); }
-
     /* ── final cta ─────────────────────────────────────────────────── */
     .final { padding: 88px 0; border-top: 1px solid var(--rule); background: var(--bg-2); }
     .final-inner {
@@ -991,10 +951,6 @@
       колаотамерика<span style="color: var(--ink-4)">/crm</span>
     </a>
     <nav class="nav">
-      <a href="#problem">Проблем</a>
-      <a href="#features">Възможности</a>
-      <a href="#tracking">Проследяване</a>
-      <a href="/" title="Каталогът на вносителите">Каталог</a>
       <a href="#contact" class="btn btn-primary btn-sm" style="color: var(--paper)">Свържи се с нас →</a>
     </nav>
   </header>
@@ -1013,9 +969,9 @@
       <a href="#features" class="btn btn-ghost">Виж как работи</a>
     </div>
     <div class="hero-meta">
-      <span><span class="tick">✓</span>Viber · WhatsApp · FB · Имейл — в една кутия</span>
-      <span><span class="tick">✓</span>Публични обяви с 1 клик</span>
-      <span><span class="tick">✓</span>Линк за клиента — без логин</span>
+      <span><span class="tick">✓</span>Чат с клиента — без приложение, без логин</span>
+      <span><span class="tick">✓</span>Обявите автоматично на сайт + Facebook</span>
+      <span><span class="tick">✓</span>Тракинг страница за всяка кола</span>
     </div>
   </section>
 
@@ -1055,32 +1011,32 @@
     <div class="section-head">
       <div class="section-tag">
         <span class="num">01</span>
-        Единна входяща кутия
+        Чат с клиента
       </div>
       <h2 class="display xl">
-        Viber, WhatsApp, Messenger, имейл, телефон —
-        <span style="color: var(--ink-3)">в един прозорец.</span>
+        Един чат за всеки клиент.
+        <span style="color: var(--ink-3)">Без 50 Viber групи.</span>
       </h2>
     </div>
 
     <div class="feature-2col">
       <div class="feat-copy">
         <p class="lede">
-          Спрете да скачате между 5 апликации. Всички съобщения от всички канали идват тук и са привързани към конкретна кола и клиент.
+          Клиентът чати с вас директно през тракинг страницата на колата си. Без приложение, без логин, без 5 различни апликации. Вие виждате всички разговори събрани на едно място, привързани към конкретна кола.
         </p>
         <ul class="feat-list">
           <li>
             <span class="k">01</span>
             <div>
-              <strong>Един линк, всички канали</strong>
-              <div class="desc">Клиентът ви пише откъдето иска — вие отговаряте от едно място.</div>
+              <strong>Чат, привързан към колата</strong>
+              <div class="desc">Всеки разговор е към конкретен автомобил — снимки, въпроси, цени, всичко на място.</div>
             </div>
           </li>
           <li>
             <span class="k">02</span>
             <div>
               <strong>Авто-отговори за чести въпроси</strong>
-              <div class="desc">„Кога пристига?“, „Какъв е статусът?“ — линк към live проследяване с 1 клик.</div>
+              <div class="desc">„Кога пристига?“, „Какъв е статусът?“ — линк към тракинг страницата с 1 клик.</div>
             </div>
           </li>
           <li>
@@ -1095,7 +1051,7 @@
 
       <div class="mock">
         <div class="mock-bar">
-          <span>входяща · 5 разговора</span>
+          <span>входяща · 5 чата · уеб</span>
           <span class="dots"><i></i><i></i><i></i></span>
         </div>
         <div class="inbox">
@@ -1110,7 +1066,7 @@
             </div>
             <div class="msg-list" id="thread-msgs"></div>
             <form class="composer" onsubmit="event.preventDefault(); this.querySelector('input').value='';">
-              <input placeholder="Отговор към клиента — изпрати по Viber, WhatsApp, имейл…" />
+              <input placeholder="Отговор към клиента…" />
               <button type="submit" class="btn btn-primary btn-sm">Изпрати</button>
             </form>
           </div>
@@ -1135,7 +1091,7 @@
     <div class="feature-2col reverse">
       <div class="feat-copy">
         <p class="lede">
-          Един общ формуляр за всички детайли: щета, ключове, продавач, аукцион или директна покупка, цена или диапазон, срок за доставка, локация. Веднъж — публикувано навсякъде: в сайта ви, на FB, на колаотамерика.
+          Един общ формуляр за всички детайли: щета, ключове, продавач, аукцион или директна покупка, цена или диапазон, срок за доставка, локация. Веднъж попълнено — обявата става достъпна на вашия сайт и автоматично се публикува във Facebook страницата ви.
         </p>
         <ul class="feat-list">
           <li>
@@ -1143,6 +1099,13 @@
             <div>
               <strong>Стандартни полета за CARFAX-стил данни</strong>
               <div class="desc">Година, пробег, двигател, ключове, статус „пали ли“ — клиентът вижда всичко без да пита.</div>
+            </div>
+          </li>
+          <li>
+            <span class="k">→</span>
+            <div>
+              <strong>Автоматичен пост във Facebook</strong>
+              <div class="desc">Една публикация — обявата веднага се появява на сайта ви и във Facebook страницата ви.</div>
             </div>
           </li>
           <li>
@@ -1157,13 +1120,6 @@
             <div>
               <strong>До 40 снимки + видео обиколка</strong>
               <div class="desc">Оригинално качество, автоматично сортиране (екстериор, интериор, щети, табло, рама).</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">→</span>
-            <div>
-              <strong>Споделяне с 1 клик</strong>
-              <div class="desc">Линк, който можете да хвърлите в групата на Viber, FB или в имейл-кампания.</div>
             </div>
           </li>
         </ul>
@@ -1299,28 +1255,28 @@
     <div class="section-head">
       <div class="section-tag">
         <span class="num">03</span>
-        Линк за клиента
+        Тракинг страница
       </div>
       <h2 class="display xl">
-        Един линк, който отговаря на въпроса
-        <span style="color: var(--ink-3)">„къде е колата?“</span>
+        Страница за всяка кола.
+        <span style="color: var(--ink-3)">Отговаря на въпроса „къде е?“ без вас.</span>
       </h2>
     </div>
 
     <div class="feature-2col">
       <div class="feat-copy">
         <p class="lede">
-          На клиента давате един линк (или го споделя сам в групата с приятели). Той вижда къде е колата му в момента, кой я кара, кога ще пристигне, и всичките си документи. Без логин. Без приложение.
+          Всяка кола има своя тракинг страница. Клиентът отваря линка и вижда къде е колата в момента, кога ще пристигне, всичките си документи, и чати с вас директно — без логин, без приложение.
         </p>
         <ul class="feat-list">
           <li><span class="k">→</span><div><strong>Live статус от аукциона до Бургас</strong><div class="desc">8 етапа, всеки със снимка, дата, GPS позиция и партньор-превозвач.</div></div></li>
           <li><span class="k">→</span><div><strong>Документи на едно място</strong><div class="desc">Title, Bill of Lading, фактура от аукцион, договор, митница, регистрация — всичко в PDF.</div></div></li>
-          <li><span class="k">→</span><div><strong>Автоматични известия</strong><div class="desc">Push, Viber или имейл при всяка промяна. Клиентът спира да ви звъни.</div></div></li>
+          <li><span class="k">→</span><div><strong>Автоматични известия</strong><div class="desc">Имейл или push при всяка промяна на статуса. Клиентът спира да ви звъни.</div></div></li>
           <li><span class="k">→</span><div><strong>По-късно: контейнер ID + митница</strong><div class="desc">Веднъж добавен номер на контейнер, проследяването е реално, в реално време.</div></div></li>
         </ul>
 
         <div class="share-link">
-          <span class="share-key">линк за клиент:</span>
+          <span class="share-key">тракинг линк:</span>
           <span class="share-url">koa.bg/c/x5-9821</span>
           <button class="btn btn-ghost btn-xs" data-copy-share="koa.bg/c/x5-9821" type="button">Копирай</button>
         </div>
@@ -1473,42 +1429,6 @@
     </div>
   </section>
 
-  <!-- ── COMPARE TABLE ───────────────────────────────────────────── -->
-  <section class="section wrap" style="padding-top: 64px; padding-bottom: 64px">
-    <div class="section-head">
-      <div class="section-tag">
-        <span class="num">05</span>
-        Сравнение
-      </div>
-      <h2 class="display xl">Excel-ът и Viber вече не достигат.</h2>
-    </div>
-
-    <div class="compare">
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 40%">Възможност</th>
-            <th class="col-us" style="width: 20%">колаотамерика/crm</th>
-            <th style="width: 20%">Excel + Viber</th>
-            <th style="width: 20%">Класически CRM</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="row-label">Снимки и обяви на едно място</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Viber / WhatsApp / FB в една кутия</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Линк за клиент — без логин</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Контейнер + GPS проследяване</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Документи (Title, BoL, фактури)</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Авто-публикуване във FB / сайт</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="label-mono">скоро</span></td></tr>
-          <tr><td class="row-label">Известия за етап → клиента</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">Вътрешен чат за екипа</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td></tr>
-          <tr><td class="row-label">Партньорска мрежа за след вноса</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
-          <tr><td class="row-label">На български</td><td class="col-us"><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">—</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
   <!-- ── FAQ ─────────────────────────────────────────────────────── -->
   <section class="faq wrap-narrow">
     <div style="margin-bottom: 32px">
@@ -1517,12 +1437,12 @@
     </div>
     <div>
       <details class="faq-item">
-        <summary>От къде идват съобщенията?<span class="plus">+</span></summary>
-        <div class="answer">Свързвате си Viber Business, WhatsApp Business, Facebook Page, имейл (IMAP/Gmail/Outlook) и SMS канал. Клиентът пише откъдето иска — вие отговаряте от едно място. Телефонни обаждания се логват автоматично с кратък преписан текст.</div>
+        <summary>Къде клиентите ми ще ми пишат?<span class="plus">+</span></summary>
+        <div class="answer">Чатът е вграден в тракинг страницата на колата — клиентът отваря линка, който вече сте му дали, и пише там директно. Без логин, без приложение. Вие виждате всички разговори събрани във вашата входяща кутия, привързани към конкретна кола.</div>
       </details>
       <details class="faq-item">
-        <summary>Може ли да публикувам обявите и на моя сайт?<span class="plus">+</span></summary>
-        <div class="answer">Да. Един и същ запис се показва на колаотамерика, на вашия сайт (чрез embed или JSON API), и автоматично се пуска като пост във Facebook бизнес страницата. Една обява, едно публикуване.</div>
+        <summary>Къде ще се показват обявите ми?<span class="plus">+</span></summary>
+        <div class="answer">Веднъж публикувана обява става достъпна на два места: на вашия сайт (под уникален URL — embed или JSON API) и автоматично се пуска като пост във Facebook бизнес страницата ви. Една обява, едно публикуване.</div>
       </details>
       <details class="faq-item">
         <summary>Какво вижда клиентът в линка си?<span class="plus">+</span></summary>
@@ -1550,16 +1470,16 @@
         <div>
           <div class="eyebrow bare" style="color: var(--warn)">— Готови да опитате?</div>
           <h2 class="display xl" style="margin-top: 16px">
-            Внасяте над 5 коли на месец?<br />
-            Първият месец е безплатен.
+            Заявете демо.<br />
+            До 24 часа ще се чуем.
           </h2>
           <p class="lede" style="margin-top: 18px">
-            Пишете ни в свободен текст: колко коли карате на месец, от къде ги внасяте, и кое ви боли най-много. До 24 часа ще се чуем — без обвързване, без презентация на 40 слайда.
+            Пишете ни в свободен текст: колко коли карате на месец, от къде ги внасяте, и кое ви боли най-много. Без обвързване, без презентация на 40 слайда.
           </p>
           <ul class="checklist" style="margin-top: 24px">
             <li>30-минутно демо по Google Meet или на живо в Бургас / София</li>
             <li>Мигрираме обявите и контактите ви безплатно</li>
-            <li>Без задължение, без месечен абонамент в първия месец</li>
+            <li>Без обвързване с дългосрочен договор</li>
           </ul>
         </div>
 
@@ -1629,45 +1549,45 @@
         {
           id: "i1", name: "Георги Петров", when: "сега",
           snippet: "Може ли още снимки на гумите?",
-          channels: ["viber"], car: "BMW X5 · 2019",
+          car: "BMW X5 · 2019",
           messages: [
-            { dir: "in",  text: "Здравейте, видях обявата за X5. Може ли още снимки на гумите?", t: "14:22 · Viber" },
-            { dir: "out", text: "Здравейте! Изпратих ви линк към пълната галерия — 47 снимки, вкл. ходова и гуми.", t: "14:24 · Viber" },
-            { dir: "in",  text: "Перфектно. А кога ще е тук?", t: "14:25 · Viber" },
-            { dir: "out", text: "Контейнерът тръгва от Балтимор на 02.06. ETA Бургас — 28.06. Виждате го live тук: koa.bg/c/x5-9821", t: "14:26 · Viber" }
+            { dir: "in",  text: "Здравейте, видях обявата за X5. Може ли още снимки на гумите?", t: "14:22" },
+            { dir: "out", text: "Здравейте! Изпратих ви линк към пълната галерия — 47 снимки, вкл. ходова и гуми.", t: "14:24" },
+            { dir: "in",  text: "Перфектно. А кога ще е тук?", t: "14:25" },
+            { dir: "out", text: "Контейнерът тръгва от Балтимор на 02.06. ETA Бургас — 28.06. Виждате го live в тракинг страницата.", t: "14:26" }
           ]
         },
         {
           id: "i2", name: "Дарина Стоилова", when: "12 мин",
           snippet: "Готова ли е фактурата от аукциона?",
-          channels: ["email", "viber"], car: "Audi Q7",
+          car: "Audi Q7",
           messages: [
-            { dir: "in",  text: "Здравейте, готова ли е фактурата от аукциона за Q7?", t: "13:18 · Имейл" },
-            { dir: "out", text: "Качвам я в линка за колата ви в момента. Виж: koa.bg/c/q7-3320", t: "13:30 · Имейл" }
+            { dir: "in",  text: "Здравейте, готова ли е фактурата от аукциона за Q7?", t: "13:18" },
+            { dir: "out", text: "Качвам я в тракинг страницата сега — ще ви се появи в раздел „Документи“.", t: "13:30" }
           ]
         },
         {
           id: "i3", name: "Емил Костов", when: "1 ч",
           snippet: "Здравейте, видях Mustang-а…",
-          channels: ["fb"], car: "Ford Mustang",
+          car: "Ford Mustang",
           messages: [
-            { dir: "in",  text: "Здравейте, видях Mustang-а в страницата ви. Има ли още такива в наличност?", t: "12:40 · Messenger" }
+            { dir: "in",  text: "Здравейте, видях Mustang-а в обявите. Има ли още такива в наличност?", t: "12:40" }
           ]
         },
         {
           id: "i4", name: "Илиян Радев", when: "3 ч",
           snippet: "Container number?",
-          channels: ["email"], car: "Tesla Model Y",
+          car: "Tesla Model Y",
           messages: [
-            { dir: "in",  text: "Hi, can you share the container number for my Model Y?", t: "10:55 · Имейл" }
+            { dir: "in",  text: "Hi, can you share the container number for my Model Y?", t: "10:55" }
           ]
         },
         {
           id: "i5", name: "Мария Янкова", when: "вчера",
           snippet: "Платих капарото — 4500 лв",
-          channels: ["tel", "viber"], car: "VW Tiguan",
+          car: "VW Tiguan",
           messages: [
-            { dir: "out", text: "Получихме капарото, благодарим! Утре получавате официална разписка.", t: "вчера · Viber" }
+            { dir: "out", text: "Получихме капарото, благодарим! Утре получавате официална разписка.", t: "вчера" }
           ]
         }
       ];
@@ -1683,7 +1603,7 @@
           <button type="button" class="inbox-item ${it.id === activeInbox ? "active" : ""}" data-inbox-id="${esc(it.id)}">
             <div class="name"><span>${esc(it.name)}</span><span class="when">${esc(it.when)}</span></div>
             <div class="snippet">${esc(it.snippet)}</div>
-            <div class="channels">${it.channels.map((c) => `<span class="chan ${esc(c)}">${esc(c)}</span>`).join("")}</div>
+            <div class="car-tag">${esc(it.car || "—")}</div>
           </button>
         `).join("");
       }
