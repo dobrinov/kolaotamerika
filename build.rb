@@ -28,6 +28,35 @@ module Build
     'source_eu'  => 'EU'
   }.freeze
 
+  # ── Display feature config (mirrors app.js FEATURES) ────────────────────
+  FEATURES = [
+    { id: 'info_amount', label: 'Количество информация', short: 'Инф.',   group: 'Основни',       type: 'info' },
+    { id: 'registered',  label: 'Регистрирана фирма',   short: 'Фирма',  group: 'Основни',       type: 'company' },
+    { id: 'website',     label: 'Уебсайт',              short: 'Сайт',   group: 'Основни',       type: 'url' },
+    { id: 'email',       label: 'Имейл',                short: 'Имейл',  group: 'Основни',       type: 'email' },
+    { id: 'phone',       label: 'Телефон за връзка',    short: 'Тел.',   group: 'Основни',       type: 'phone' },
+    { id: 'viber',       label: 'Viber група',          short: 'Viber',  group: 'Основни',       type: 'url' },
+    { id: 'source_usa',  label: 'Внос от САЩ',          short: 'САЩ',    group: 'Внася от',      type: 'value' },
+    { id: 'source_ca',   label: 'Внос от Канада',       short: 'CA',     group: 'Внася от',      type: 'value' },
+    { id: 'source_eu',   label: 'Внос от ЕС',           short: 'EU',     group: 'Внася от',      type: 'value' },
+    { id: 'source_kr',   label: 'Внос от Корея',        short: 'KR',     group: 'Внася от',      type: 'value' },
+    { id: 'source_jp',   label: 'Внос от Япония',       short: 'JP',     group: 'Внася от',      type: 'value' },
+    { id: 'facebook',    label: 'Facebook страница',    short: 'FB',     group: 'Други канали',  type: 'url' },
+    { id: 'instagram',   label: 'Instagram',            short: 'IG',     group: 'Други канали',  type: 'url' },
+    { id: 'youtube',     label: 'YouTube канал',        short: 'YT',     group: 'Други канали',  type: 'url' },
+    { id: 'tiktok',      label: 'TikTok',               short: 'TT',     group: 'Други канали',  type: 'url' },
+    { id: 'mobile_bg',   label: 'Витрина в Mobile.bg',  short: 'Mobile', group: 'Други канали',  type: 'url' },
+    { id: 'cars_bg',     label: 'Профил в Cars.bg',     short: 'Cars',   group: 'Други канали',  type: 'url' },
+  ].freeze
+
+  SOURCE_LABEL = { 'USA' => 'САЩ', 'CA' => 'Канада', 'EU' => 'ЕС', 'KR' => 'Корея', 'JP' => 'Япония' }.freeze
+  INFO_KEY_IDS = %w[registered website email phone viber].freeze
+
+  ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  ICON_DASH  = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+  ICON_ARROW_RIGHT = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6H9.5M9.5 6L6 2.5M9.5 6L6 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  ICON_SORT_DESC = '<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 8.5L1 4H7L4 8.5Z" fill="currentColor"/></svg>'
+
   # Convert a CSV::Row into the Hash shape expected by the React app.
   # Audit columns (last_checked, verification_notes) are NOT included.
   # Key insertion order matches the existing JSON exactly so the regenerated
@@ -103,6 +132,201 @@ module Build
     first_line.count(';') > first_line.count(',') ? ';' : ','
   end
 
+  # ── Display-shape transform (mirrors app.js transformCompany) ─────────
+  def self.clean_url(u)
+    u.to_s.sub(%r{\Ahttps?://(www\.)?}i, '').sub(%r{/\z}, '')
+  end
+
+  def self.pick_social(c, label)
+    (c[:social] || []).find { |s| s[:label] == label }
+  end
+
+  def self.transform_for_display(c)
+    facebook  = pick_social(c, 'Facebook')
+    instagram = pick_social(c, 'Instagram')
+    viber     = pick_social(c, 'Viber')
+    youtube   = pick_social(c, 'YouTube')
+    tiktok    = pick_social(c, 'TikTok')
+    mobile    = pick_social(c, 'Mobile.bg') || pick_social(c, 'Mobile.bg (Център)')
+    cars      = pick_social(c, 'Cars.bg')
+
+    registered = false
+    if c[:eik]
+      registered = {
+        eik: c[:eik],
+        name: real_legal_name?(c[:legal].to_s) ? c[:legal] : '(непълно име)',
+        date: c[:founded] || '—',
+        address: c[:city] || '—',
+        owner: c[:owner],
+        capital: c[:capitalText],
+        eikUrl: c[:eikUrl],
+      }.compact
+    end
+
+    source_cell = ->(code) {
+      (c[:sources] || []).include?(code) ? { value: "Активен внос от #{SOURCE_LABEL[code]}" } : false
+    }
+
+    url_val = ->(u) { u ? { value: u, display: clean_url(u) } : nil }
+
+    fb_disp = facebook ? clean_url(facebook[:url]).sub(/\Afacebook\.com/, '') : nil
+    ig_disp = instagram ? '@' + clean_url(instagram[:url]).sub(%r{\Ainstagram\.com/}, '').sub(/\?.*\z/, '') : nil
+    yt_disp = youtube ? clean_url(youtube[:url]).sub(%r{\Ayoutube\.com/}, '') : nil
+    tt_disp = tiktok ? clean_url(tiktok[:url]).sub(%r{\Atiktok\.com/}, '') : nil
+
+    {
+      id: c[:id],
+      name: c[:brand],
+      legalRaw: c[:legal],
+      blurb: c[:blurb],
+      location: c[:city] || '—',
+      founded: c[:founded] ? c[:founded][0, 4].to_i : nil,
+      capitalText: c[:capitalText],
+      eik: c[:eik],
+      eikUrl: c[:eikUrl],
+      sources: c[:sources] || [],
+      group: c[:group],
+      isGroupHead: c[:isGroupHead] == true,
+      isNew: c[:isNew] == true,
+      values: {
+        registered:  registered,
+        source_usa:  source_cell.call('USA'),
+        source_ca:   source_cell.call('CA'),
+        source_eu:   source_cell.call('EU'),
+        source_kr:   source_cell.call('KR'),
+        source_jp:   source_cell.call('JP'),
+        website:     url_val.call(c[:web]),
+        facebook:    facebook ? { value: facebook[:url], display: fb_disp } : nil,
+        instagram:   instagram ? { value: instagram[:url], display: ig_disp } : nil,
+        viber:       viber ? { value: viber[:url], display: 'Viber група' } : nil,
+        youtube:     youtube ? { value: youtube[:url], display: yt_disp } : nil,
+        tiktok:      tiktok ? { value: tiktok[:url], display: tt_disp } : nil,
+        mobile_bg:   mobile ? { value: mobile[:url], display: clean_url(mobile[:url]) } : nil,
+        cars_bg:     cars ? { value: cars[:url], display: clean_url(cars[:url]) } : nil,
+        phone:       c[:phone] ? { value: c[:phone], display: c[:phone] } : nil,
+        email:       c[:email] ? { value: c[:email], display: c[:email] } : nil,
+      },
+    }
+  end
+
+  def self.info_percent(c)
+    filled = INFO_KEY_IDS.count { |id| c[:values][id.to_sym] }
+    (filled * 100.0 / INFO_KEY_IDS.length).round
+  end
+
+  # Default sort: info_amount desc, registered first for ties, alpha by name.
+  def self.default_sort(companies)
+    companies.sort_by.with_index do |c, i|
+      [-info_percent(c), c[:values][:registered] ? 0 : 1, c[:name].downcase, i]
+    end
+  end
+
+  # ── HTML rendering (mirrors app.js renderHeader / renderRow / renderCell) ─
+  def self.h(s) = CGI.escapeHTML(s.to_s)
+
+  def self.render_info_cell(c)
+    pct = info_percent(c)
+    %Q(<td class="cell cell--info"><div class="info-cell"><div class="info-bar" aria-hidden="true"><div class="info-fill" style="width:#{pct}%"></div></div><div class="info-pct mono">#{pct}%</div></div></td>)
+  end
+
+  def self.render_cell(c, f)
+    return render_info_cell(c) if f[:type] == 'info'
+    v = c[:values][f[:id].to_sym]
+    present = !!v
+    state = present ? 'yes' : 'no'
+    icon = present ? ICON_CHECK : ICON_DASH
+    label = present ? 'да' : 'не'
+    aria = "#{h(f[:label])}: #{label}"
+
+    tip = if !present then 'Не е налично'
+          elsif f[:type] == 'company' then "#{v[:name]} · ЕИК #{v[:eik]}"
+          elsif f[:type] == 'url' then 'Отвори'
+          elsif f[:type] == 'phone' || f[:type] == 'email' then v[:display]
+          elsif v[:value] then v[:value]
+          else ''
+          end
+    tip_attr = %Q(data-tip="#{h(tip)}")
+
+    if present && %w[url email phone].include?(f[:type])
+      first_phone = f[:type] == 'phone' ? v[:value].to_s.split(/\s*·\s*/).first : v[:value]
+      href = case f[:type]
+             when 'email' then "mailto:#{v[:value]}"
+             when 'phone' then "tel:#{first_phone.to_s.gsub(/[^+\d]/, '')}"
+             else v[:value]
+             end
+      target = f[:type] == 'url' ? ' target="_blank" rel="noopener noreferrer"' : ''
+      return %Q(<td class="cell cell--yes"><a class="cell-btn" href="#{h(href)}"#{target} aria-label="#{aria}" #{tip_attr}><span class="cell-mark" aria-hidden="true">#{icon}</span></a></td>)
+    end
+
+    is_company = present && f[:type] == 'company'
+    data_pop = is_company ? %Q(data-pop="#{h(c[:id])}") : ''
+    disabled = present ? '' : 'disabled'
+    %Q(<td class="cell cell--#{state}"><button class="cell-btn" #{disabled} aria-label="#{aria}" #{tip_attr} #{data_pop}><span class="cell-mark" aria-hidden="true">#{icon}</span></button></td>)
+  end
+
+  def self.render_row(c, idx)
+    meta = c[:founded] ? %Q(<div class="cmeta"><span>от #{h(c[:founded])}</span></div>) : ''
+    cells = FEATURES.map { |f| render_cell(c, f) }.join
+    <<~ROW.chomp
+      <tr class="bodyrow" data-id="#{h(c[:id])}">
+        <th class="namecell sticky-col" scope="row">
+          <div class="rank">#{format('%02d', idx + 1)}</div>
+          <div class="namebox">
+            <div class="cname">#{h(c[:name])}</div>
+            #{meta}
+          </div>
+        </th>
+        #{cells}
+        <td class="endcell"><button class="details-btn" data-drawer="#{h(c[:id])}">Детайли #{ICON_ARROW_RIGHT}</button></td>
+      </tr>
+    ROW
+  end
+
+  def self.render_thead
+    groups = []
+    cur = nil
+    FEATURES.each do |f|
+      if cur.nil? || cur[:name] != f[:group]
+        cur = { name: f[:group], count: 1 }
+        groups << cur
+      else
+        cur[:count] += 1
+      end
+    end
+
+    group_row = %Q(<tr class="grouprow"><th class="ghead sticky-col" scope="col"><span class="ghead-label">Вносител</span></th>#{groups.map { |g| %Q(<th class="ghead ghead-group" colspan="#{g[:count]}" scope="colgroup"><span class="ghead-group-label">#{h(g[:name])}</span></th>) }.join}<th class="ghead ghead-end" scope="col"></th></tr>)
+
+    # Default sort is info_amount desc — show descending arrow on Инф.
+    name_th = %Q(<th class="head sticky-col head-sortable" scope="col" data-sort="name" aria-sort="none"><span class="head-label">Компания<span class="sort-arrow-slot"></span></span></th>)
+    feat_ths = FEATURES.map do |f|
+      active = f[:id] == 'info_amount'
+      active_class = active ? ' head-sort-active' : ''
+      aria_sort = active ? 'descending' : 'none'
+      arrow = active ? ICON_SORT_DESC : ''
+      %Q(<th class="head head-feat head-sortable#{active_class}" scope="col" data-sort="#{h(f[:id])}" data-tip="#{h(f[:label])}" aria-sort="#{aria_sort}"><span class="head-feat-label">#{h(f[:short])}<span class="sort-arrow-slot">#{arrow}</span></span></th>)
+    end.join
+
+    head_row = %Q(<tr class="headrow">#{name_th}#{feat_ths}<th class="head head-end" scope="col"></th></tr>)
+    group_row + "\n" + head_row
+  end
+
+  def self.render_tbody(display_companies)
+    default_sort(display_companies).each_with_index.map { |c, i| render_row(c, i) }.join("\n")
+  end
+
+  THEAD_RE = %r{(<thead\ id="thead">).*?(</thead>)}mx
+  TBODY_RE = %r{(<tbody\ id="tbody">).*?(</tbody>)}mx
+
+  def self.splice_thead(html, body)
+    return html unless html.match?(THEAD_RE)
+    html.sub(THEAD_RE) { "#{Regexp.last_match(1)}\n        #{body}\n      #{Regexp.last_match(2)}" }
+  end
+
+  def self.splice_tbody(html, body)
+    return html unless html.match?(TBODY_RE)
+    html.sub(TBODY_RE) { "#{Regexp.last_match(1)}\n        #{body}\n      #{Regexp.last_match(2)}" }
+  end
+
   class MissingMarkerError < StandardError; end
 
   JSON_BLOCK_RE = %r{
@@ -120,35 +344,6 @@ module Build
     html.sub(JSON_BLOCK_RE) { "#{Regexp.last_match(1)}\n#{json_body}\n  #{Regexp.last_match(2)}" }
   end
 
-  NOSCRIPT_UL_RE = %r{
-    (<div\ class="seo-static">.*?<ul>) # opening: any seo-static block up to its first <ul> (captured)
-    .*?                                 # body (replaced)
-    (</ul>)                             # closing (captured)
-  }mx
-
-  def self.splice_noscript(html, companies)
-    items = companies
-            .reject { |c| c[:hideFromList] }
-            .map { |c| noscript_item(c) }
-            .join("\n        ")
-    unless html.match?(NOSCRIPT_UL_RE)
-      raise MissingMarkerError, 'Could not find <div class="seo-static"> ... <ul> ... </ul>'
-    end
-    html.sub(NOSCRIPT_UL_RE) { "#{Regexp.last_match(1)}\n        #{items}\n      #{Regexp.last_match(2)}" }
-  end
-
-  def self.noscript_item(company)
-    brand = CGI.escapeHTML(company[:brand].to_s)
-    legal = company[:legal].to_s
-    web   = company[:web].to_s
-    label = real_legal_name?(legal) ? "#{brand} (#{CGI.escapeHTML(legal)})" : brand
-    if web.empty?
-      "<li>#{label}</li>"
-    else
-      %Q(<li><a href="#{CGI.escapeHTML(web)}" rel="nofollow noopener">#{label}</a></li>)
-    end
-  end
-
   # A legal value is a real registered name (worth showing in parens) only when
   # it's non-empty AND doesn't start with `(` (which marks a placeholder like
   # "(търговско име — North Auto group)" or "(юридическо лице не е намерено)")
@@ -160,11 +355,6 @@ module Build
     true
   end
 
-  # Render companies as a JSON array string, one company per line, indented
-  # two spaces. Matches the readability style of the existing embedded block.
-  def self.render_json_array(companies)
-    "[\n  " + companies.map { |c| JSON.generate(c) }.join(",\n  ") + "\n]"
-  end
 
   JSONLD_BLOCK_RE = %r{
     (<script\ type="application/ld\+json"\ id="catalog-jsonld">) # opening (captured)
@@ -273,17 +463,31 @@ module Build
   def self.run(csv_path: 'companies.csv', html_path: 'index.html')
     rows      = CSV.read(csv_path, headers: true, col_sep: detect_delimiter(csv_path))
     companies = rows.map { |r| row_to_company(r) }
-    json_body = render_json_array(companies)
+    visible   = companies.reject { |c| c[:hideFromList] }
+    display   = visible.map { |c| transform_for_display(c) }
+
+    json_body = render_display_json(display)
     jsonld    = render_jsonld(companies)
     bundle    = compile_app
+    thead     = render_thead
+    tbody     = render_tbody(display)
 
     html = File.read(html_path)
     html = splice_json_block(html, json_body)
-    html = splice_noscript(html, companies)
     html = splice_jsonld(html, jsonld)
+    html = splice_thead(html, thead)
+    html = splice_tbody(html, tbody)
     html = splice_app_bundle(html, bundle) if bundle
     File.write(html_path, html)
     companies.length
+  end
+
+  # JSON the JS app reads at runtime — already in display shape, already
+  # filtered to visible rows, default-sorted. JS uses it for re-sort
+  # comparisons and to drive the drawer/popover for any clicked row.
+  def self.render_display_json(display_companies)
+    sorted = default_sort(display_companies)
+    "[\n  " + sorted.map { |c| JSON.generate(c) }.join(",\n  ") + "\n]"
   end
 end
 

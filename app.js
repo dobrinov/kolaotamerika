@@ -1,7 +1,21 @@
 (() => {
   "use strict";
 
-  // ── Feature config ──────────────────────────────────────────────────────
+  // The page is already rendered by build.rb. This script:
+  //   1. Reads the embedded JSON (display-shape, default-sorted) so it can
+  //      re-sort the rows and open the drawer / popover with the right
+  //      company data without re-parsing the table DOM.
+  //   2. Attaches event handlers for sort / drawer / popover / tooltip.
+  //
+  // No HTML is built for the table on load — sort just reorders the
+  // existing <tr> nodes in place.
+
+  const RAW = JSON.parse(document.getElementById("company-data").textContent);
+  const COMPANIES = RAW; // already filtered + default-sorted by build.rb
+  const COMPANY_BY_ID = Object.fromEntries(COMPANIES.map((c) => [c.id, c]));
+
+  // Same FEATURES order as build.rb. Used by sort & drawer; the rendered
+  // table doesn't need it because Ruby already emitted the cells.
   const FEATURES = [
     { id: "info_amount", label: "Количество информация", short: "Инф.",  group: "Основни", type: "info" },
     { id: "registered",  label: "Регистрирана фирма",   short: "Фирма", group: "Основни", type: "company" },
@@ -21,127 +35,38 @@
     { id: "mobile_bg",   label: "Витрина в Mobile.bg",  short: "Mobile",group: "Други канали", type: "url" },
     { id: "cars_bg",     label: "Профил в Cars.bg",     short: "Cars",  group: "Други канали", type: "url" },
   ];
-
   const SOURCE_LABEL = { USA: "САЩ", CA: "Канада", EU: "ЕС", KR: "Корея", JP: "Япония" };
   const INFO_KEY_IDS = ["registered", "website", "email", "phone", "viber"];
 
-  // ── Helpers ────────────────────────────────────────────────────────────
-  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[c]);
-  const cleanUrl = (u) => String(u).replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
-  const pickSocial = (c, label) => (c.social || []).find((s) => s.label === label);
-  const urlValue = (u) => u ? { value: u, display: cleanUrl(u) } : null;
-  const isRealLegal = (legal) => {
-    if (!legal) return false;
-    const s = String(legal);
-    return !(s.startsWith("(") || s === "—");
-  };
-
-  // ── Icons (SVG markup, currentColor) ───────────────────────────────────
   const ICONS = {
     check: '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     dash:  '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
     ext:   '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5H9.5V7.5M9.5 2.5L5 7M3 4.5V9H7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     copy:  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 7.5V2.5C2 2.22 2.22 2 2.5 2H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
-    arrow: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6H9.5M9.5 6L6 2.5M9.5 6L6 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     close: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     sortAsc:  '<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 1.5L7 6H1L4 1.5Z" fill="currentColor"/></svg>',
     sortDesc: '<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 8.5L1 4H7L4 8.5Z" fill="currentColor"/></svg>',
   };
 
-  // ── Data transform ─────────────────────────────────────────────────────
-  function transformCompany(c) {
-    const facebook  = pickSocial(c, "Facebook");
-    const instagram = pickSocial(c, "Instagram");
-    const viber     = pickSocial(c, "Viber");
-    const youtube   = pickSocial(c, "YouTube");
-    const tiktok    = pickSocial(c, "TikTok");
-    const mobile    = pickSocial(c, "Mobile.bg") || pickSocial(c, "Mobile.bg (Център)");
-    const cars      = pickSocial(c, "Cars.bg");
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
 
-    let registered = false;
-    if (c.eik) {
-      registered = {
-        eik: c.eik,
-        name: isRealLegal(c.legal) ? c.legal : "(непълно име)",
-        date: c.founded || "—",
-        address: c.city || "—",
-        owner: c.owner || null,
-        capital: c.capitalText || null,
-        eikUrl: c.eikUrl || null,
-      };
-    }
-
-    const sourceCell = (code) => (c.sources || []).includes(code)
-      ? { value: "Активен внос от " + SOURCE_LABEL[code] }
-      : false;
-
-    const igDisplay = instagram ? "@" + cleanUrl(instagram.url).replace(/^instagram\.com\//, "").replace(/\?.*$/, "") : null;
-    const fbDisplay = facebook ? cleanUrl(facebook.url).replace(/^facebook\.com/, "") : null;
-    const ytDisplay = youtube ? cleanUrl(youtube.url).replace(/^youtube\.com\//, "") : null;
-    const ttDisplay = tiktok ? cleanUrl(tiktok.url).replace(/^tiktok\.com\//, "") : null;
-
-    return {
-      id: c.id,
-      name: c.brand,
-      legalRaw: c.legal,
-      blurb: c.blurb,
-      location: c.city || "—",
-      founded: c.founded ? parseInt(c.founded.slice(0, 4), 10) : null,
-      foundedFull: c.founded,
-      capitalText: c.capitalText,
-      owner: c.owner,
-      eik: c.eik,
-      eikUrl: c.eikUrl,
-      sources: c.sources || [],
-      group: c.group,
-      isGroupHead: c.isGroupHead === true,
-      isNew: c.isNew === true,
-      values: {
-        registered,
-        source_usa: sourceCell("USA"),
-        source_ca:  sourceCell("CA"),
-        source_eu:  sourceCell("EU"),
-        source_kr:  sourceCell("KR"),
-        source_jp:  sourceCell("JP"),
-        website:    c.web ? urlValue(c.web) : null,
-        facebook:   facebook ? { value: facebook.url, display: fbDisplay } : null,
-        instagram:  instagram ? { value: instagram.url, display: igDisplay } : null,
-        viber:      viber ? { value: viber.url, display: "Viber група" } : null,
-        youtube:    youtube ? { value: youtube.url, display: ytDisplay } : null,
-        tiktok:     tiktok ? { value: tiktok.url, display: ttDisplay } : null,
-        mobile_bg:  mobile ? { value: mobile.url, display: cleanUrl(mobile.url) } : null,
-        cars_bg:    cars ? { value: cars.url, display: cleanUrl(cars.url) } : null,
-        phone:      c.phone ? { value: c.phone, display: c.phone } : null,
-        email:      c.email ? { value: c.email, display: c.email } : null,
-      },
-    };
+  // ── Last-updated date in the footer ────────────────────────────────────
+  const lastUpdate = document.getElementById("last-update");
+  if (lastUpdate) {
+    lastUpdate.textContent = new Date().toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" });
   }
 
-  const RAW = JSON.parse(document.getElementById("company-data").textContent);
-  const COMPANIES = RAW.filter((c) => !c.hideFromList).map(transformCompany);
-  const COMPANY_BY_ID = Object.fromEntries(COMPANIES.map((c) => [c.id, c]));
-  const LAST_UPDATE = new Date().toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" });
+  // ── Sort ───────────────────────────────────────────────────────────────
+  let sortBy = { col: "info_amount", dir: "desc" };
 
   function computeInfoPercent(c) {
     const filled = INFO_KEY_IDS.filter((id) => c.values[id]).length;
     return Math.round((filled / INFO_KEY_IDS.length) * 100);
   }
 
-  // ── Sort state ─────────────────────────────────────────────────────────
-  let sortBy = { col: "info_amount", dir: "desc" };
-
-  function setSort(col) {
-    if (sortBy.col === col) {
-      sortBy = { col, dir: sortBy.dir === "asc" ? "desc" : "asc" };
-    } else {
-      sortBy = { col, dir: col === "name" ? "asc" : "desc" };
-    }
-    renderTable();
-  }
-
-  function sortedCompanies() {
+  function sortedIds() {
     const { col, dir } = sortBy;
     const keyOf = (c) => {
       if (col === "name") return c.name;
@@ -157,102 +82,42 @@
       }
       if (cmp === 0) cmp = a.name.localeCompare(b.name, "bg");
       return cmp;
+    }).map((c) => c.id);
+  }
+
+  function applySort() {
+    const tbody = document.getElementById("tbody");
+    if (!tbody) return;
+    const rowById = Object.fromEntries(
+      Array.from(tbody.querySelectorAll(".bodyrow")).map((r) => [r.dataset.id, r])
+    );
+    sortedIds().forEach((id, i) => {
+      const row = rowById[id];
+      if (!row) return;
+      tbody.appendChild(row); // reattach in new order
+      const rank = row.querySelector(".rank");
+      if (rank) rank.textContent = String(i + 1).padStart(2, "0");
+    });
+    updateSortArrows();
+  }
+
+  function updateSortArrows() {
+    document.querySelectorAll(".head-sortable").forEach((th) => {
+      const active = th.dataset.sort === sortBy.col;
+      th.classList.toggle("head-sort-active", active);
+      th.setAttribute("aria-sort", active ? (sortBy.dir === "asc" ? "ascending" : "descending") : "none");
+      const slot = th.querySelector(".sort-arrow-slot");
+      if (slot) slot.innerHTML = active ? (sortBy.dir === "asc" ? ICONS.sortAsc : ICONS.sortDesc) : "";
     });
   }
 
-  // ── Rendering ──────────────────────────────────────────────────────────
-  function renderInfoCell(c) {
-    const pct = computeInfoPercent(c);
-    return `<td class="cell cell--info"><div class="info-cell"><div class="info-bar" aria-hidden="true"><div class="info-fill" style="width:${pct}%"></div></div><div class="info-pct mono">${pct}%</div></div></td>`;
-  }
-
-  function renderCell(c, f) {
-    if (f.type === "info") return renderInfoCell(c);
-    const v = c.values[f.id];
-    const state = v ? "yes" : "no";
-    const present = state === "yes";
-    const icon = present ? ICONS.check : ICONS.dash;
-    const label = present ? "да" : "не";
-    const aria = `${esc(f.label)}: ${label}`;
-
-    let tip = "Не е налично";
-    if (present) {
-      if (f.type === "company") tip = `${v.name} · ЕИК ${v.eik}`;
-      else if (f.type === "url") tip = "Отвори";
-      else if (f.type === "phone" || f.type === "email") tip = v.display;
-      else if (v.value) tip = v.value;
+  function setSort(col) {
+    if (sortBy.col === col) {
+      sortBy = { col, dir: sortBy.dir === "asc" ? "desc" : "asc" };
+    } else {
+      sortBy = { col, dir: col === "name" ? "asc" : "desc" };
     }
-    const tipAttr = `data-tip="${esc(tip)}"`;
-
-    // Direct-link cells: url/email/phone
-    if (present && (f.type === "url" || f.type === "email" || f.type === "phone")) {
-      const firstPhone = f.type === "phone" ? v.value.split(/\s*·\s*/)[0] : v.value;
-      const href = f.type === "email" ? `mailto:${v.value}`
-                : f.type === "phone" ? `tel:${firstPhone.replace(/[^+\d]/g, "")}`
-                : v.value;
-      const target = f.type === "url" ? ' target="_blank" rel="noopener noreferrer"' : "";
-      return `<td class="cell cell--yes"><a class="cell-btn" href="${esc(href)}"${target} aria-label="${aria}" ${tipAttr}><span class="cell-mark" aria-hidden="true">${icon}</span></a></td>`;
-    }
-
-    // Company-type with popover, value-type (sources) non-interactive, no-state cells disabled
-    const isCompany = present && f.type === "company";
-    const dataAttrs = isCompany ? `data-pop="${esc(c.id)}"` : "";
-    const disabled = present ? "" : "disabled";
-    return `<td class="cell cell--${state}"><button class="cell-btn" ${disabled} aria-label="${aria}" ${tipAttr} ${dataAttrs}><span class="cell-mark" aria-hidden="true">${icon}</span></button></td>`;
-  }
-
-  function renderRow(c, idx) {
-    const meta = c.founded ? `<div class="cmeta"><span>от ${esc(c.founded)}</span></div>` : "";
-    const cells = FEATURES.map((f) => renderCell(c, f)).join("");
-    return `<tr class="bodyrow">
-      <th class="namecell sticky-col" scope="row">
-        <div class="rank">${String(idx + 1).padStart(2, "0")}</div>
-        <div class="namebox">
-          <div class="cname">${esc(c.name)}</div>
-          ${meta}
-        </div>
-      </th>
-      ${cells}
-      <td class="endcell"><button class="details-btn" data-drawer="${esc(c.id)}">Детайли ${ICONS.arrow}</button></td>
-    </tr>`;
-  }
-
-  function renderHeader() {
-    const groups = [];
-    let cur = null;
-    FEATURES.forEach((f) => {
-      if (!cur || cur.name !== f.group) { cur = { name: f.group, count: 1 }; groups.push(cur); }
-      else cur.count++;
-    });
-
-    const groupRow = `<tr class="grouprow">
-      <th class="ghead sticky-col" scope="col"><span class="ghead-label">Вносител</span></th>
-      ${groups.map((g) => `<th class="ghead ghead-group" colspan="${g.count}" scope="colgroup"><span class="ghead-group-label">${esc(g.name)}</span></th>`).join("")}
-      <th class="ghead ghead-end" scope="col"></th>
-    </tr>`;
-
-    const nameActive = sortBy.col === "name";
-    const nameArrow = nameActive ? (sortBy.dir === "asc" ? ICONS.sortAsc : ICONS.sortDesc) : "";
-    const headRow = `<tr class="headrow">
-      <th class="head sticky-col head-sortable ${nameActive ? "head-sort-active" : ""}" scope="col" data-sort="name" aria-sort="${nameActive ? (sortBy.dir === "asc" ? "ascending" : "descending") : "none"}">
-        <span class="head-label">Компания${nameArrow}</span>
-      </th>
-      ${FEATURES.map((f) => {
-        const active = sortBy.col === f.id;
-        const arrow = active ? (sortBy.dir === "asc" ? ICONS.sortAsc : ICONS.sortDesc) : "";
-        return `<th class="head head-feat head-sortable ${active ? "head-sort-active" : ""}" scope="col" data-sort="${esc(f.id)}" data-tip="${esc(f.label)}" aria-sort="${active ? (sortBy.dir === "asc" ? "ascending" : "descending") : "none"}">
-          <span class="head-feat-label">${esc(f.short)}${arrow}</span>
-        </th>`;
-      }).join("")}
-      <th class="head head-end" scope="col"></th>
-    </tr>`;
-
-    return groupRow + headRow;
-  }
-
-  function renderTable() {
-    document.getElementById("thead").innerHTML = renderHeader();
-    document.getElementById("tbody").innerHTML = sortedCompanies().map(renderRow).join("");
+    applySort();
   }
 
   // ── Drawer ─────────────────────────────────────────────────────────────
@@ -369,7 +234,7 @@
     if (openDrawerCleanup) openDrawerCleanup();
   }
 
-  // ── Company-cell popover (registry details) ────────────────────────────
+  // ── Company-cell popover ───────────────────────────────────────────────
   let openPopoverCleanup = null;
 
   function openCompanyPopover(anchor, company) {
@@ -404,7 +269,6 @@
     </div>`;
     document.body.appendChild(pop);
 
-    // Position relative to anchor
     const a = anchor.getBoundingClientRect();
     const pw = pop.offsetWidth, ph = pop.offsetHeight;
     let left = a.left + a.width / 2 - pw / 2;
@@ -443,7 +307,7 @@
     if (openPopoverCleanup) openPopoverCleanup();
   }
 
-  // ── Tooltip (lightweight hover) ────────────────────────────────────────
+  // ── Tooltip ────────────────────────────────────────────────────────────
   let tooltipEl = null;
   let tooltipTimer = null;
   let tooltipAnchor = null;
@@ -487,43 +351,11 @@
     update();
   }
 
-  // ── Build initial DOM ──────────────────────────────────────────────────
+  // ── Event delegation ───────────────────────────────────────────────────
   function init() {
     const root = document.getElementById("root");
-    root.innerHTML = `<div class="page">
-      <section class="hero">
-        <div class="hero-inner">
-          <div class="hero-kicker">колаотамерика</div>
-          <h1 class="hero-title">Кой внася коли от Канада, Америка, Южна Корея, Япония, Европа?</h1>
-          <p class="hero-lead">Каталог на фирмите, занимаващи се с внос на коли в България.</p>
-        </div>
-      </section>
-      <section class="table-wrap">
-        <div class="table-scroll with-shadow">
-          <table class="ctable">
-            <colgroup>
-              <col style="width:280px">
-              ${FEATURES.map(() => '<col style="width:92px">').join("")}
-              <col style="width:130px">
-            </colgroup>
-            <thead id="thead"></thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-      </section>
-      <footer class="foot">
-        <div class="foot-inner">
-          <div>© 2026 колаотамерика</div>
-          <a class="foot-cta" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка">Подай вносител или поправка →</a>
-          <span class="meta-pill"><span class="dot"></span> Последна актуализация: ${esc(LAST_UPDATE)}</span>
-        </div>
-      </footer>
-    </div>`;
-
-    renderTable();
     attachScrollShadow();
 
-    // Event delegation
     root.addEventListener("click", (e) => {
       const sortEl = e.target.closest("[data-sort]");
       if (sortEl) { setSort(sortEl.dataset.sort); return; }
@@ -533,7 +365,6 @@
       if (popEl) { openCompanyPopover(popEl, COMPANY_BY_ID[popEl.dataset.pop]); return; }
     });
 
-    // Hover tooltips for any element with data-tip
     root.addEventListener("mouseover", (e) => {
       const target = e.target.closest("[data-tip]");
       if (target) showTooltip(target);

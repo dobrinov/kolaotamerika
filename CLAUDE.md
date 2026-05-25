@@ -20,23 +20,27 @@ directly with `file://` works.
   locale) re-save with `;` as the delimiter; `build.rb` auto-detects `,` or
   `;` so either is fine.
 - **`build.rb`** — reads `companies.csv`, minifies `app.js`, and rewrites
-  four regions inside `index.html`:
-  1. The `<script type="application/json" id="company-data">` JSON block
-     the app consumes at startup.
-  2. The `<ul>` inside `<div class="seo-static">` (the `<noscript>` SEO
-     fallback list). Each `<li>` is wrapped in an `<a>` when the row has
-     a `web` URL.
-  3. The `<script type="application/ld+json" id="catalog-jsonld">` block
-     in the head — schema.org `ItemList` of `AutoDealer` organizations for
-     each non-hidden row (used by search engines).
-  4. The `<script id="app-bundle">` block at the bottom of the body — the
-     minified output of `app.js`. Run via `npx esbuild --target=es2020
-     --charset=utf8 --minify`. If npx fails the raw source is inlined.
-  Everything else in `index.html` is left byte-for-byte intact.
-- **`app.js`** — the vanilla-JS app (no React, no framework). Reads the
-  embedded JSON, renders the table via `innerHTML` + event delegation,
-  manages sort state, drawer, popover and tooltips. Edit this to change
-  the UI; `ruby build.rb` re-minifies it into `index.html`.
+  five regions inside `index.html`:
+  1. `<thead id="thead">` — the rendered group + column header rows of
+     the table.
+  2. `<tbody id="tbody">` — the rendered data rows, default-sorted by
+     Инф. desc with registered-first tiebreak.
+  3. `<script type="application/json" id="company-data">` — the same
+     companies in display shape (already filtered to visible, already
+     default-sorted). `app.js` reads this to re-sort and to drive the
+     drawer / popover.
+  4. `<script type="application/ld+json" id="catalog-jsonld">` — the
+     schema.org `@graph` (WebSite + ItemList of AutoDealer Orgs).
+  5. `<script id="app-bundle">` — the minified output of `app.js`. Run
+     via `npx esbuild --target=es2020 --charset=utf8 --minify`. If npx
+     fails the raw source is inlined.
+  Everything else in `index.html` (hero, footer, table chrome) is static
+  HTML and is left byte-for-byte intact.
+- **`app.js`** — vanilla JS, runs after the static-rendered table is
+  already on screen. Does NOT build the initial DOM. Reads
+  `#company-data` for in-memory state. On a sort click it reorders the
+  existing `<tr>` nodes in place (no innerHTML rebuild) and updates the
+  rank cells. Drawer / popover / tooltip are still created on demand.
 - **`index.html`** — head, styles, the React/Babel app, and the two
   regenerated regions. Open it in any modern browser to view the catalog.
 
@@ -131,11 +135,13 @@ it shows `Brand (Legal)` when `legal` is a real registered name, or just
    `index.html` is just the two regenerated regions; anything else is a sign
    you accidentally hand-edited the HTML.
 
-Never hand-edit the JSON inside `<script id="company-data">`, the `<ul>`
-inside `<div class="seo-static">`, the JSON inside
+Never hand-edit `<thead id="thead">`, `<tbody id="tbody">`, the JSON
+inside `<script id="company-data">`, the JSON inside
 `<script id="catalog-jsonld">`, or the JS inside
 `<script id="app-bundle">` — those are generated artifacts that
-`build.rb` will overwrite. To change the UI, edit `app.js`.
+`build.rb` will overwrite. To change the table, edit `companies.csv`
+(data) or `app.js` + `build.rb` (rendering — they share the FEATURES
+config and produce the same HTML).
 
 ## CSS / layout gotchas
 
