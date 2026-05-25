@@ -259,9 +259,14 @@ module Build
     end
 
     is_company = present && f[:type] == 'company'
-    data_pop = is_company ? %Q(data-pop="#{h(c[:id])}") : ''
-    disabled = present ? '' : 'disabled'
-    %Q(<td class="cell cell--#{state}"><button class="cell-btn" #{disabled} aria-label="#{aria}" #{tip_attr} #{data_pop}><span class="cell-mark" aria-hidden="true">#{icon}</span></button></td>)
+    is_source  = f[:type] == 'value' && f[:id].to_s.start_with?('source_')
+    data_pop    = is_company ? %Q(data-pop="#{h(c[:id])}") : ''
+    data_source = is_source  ? %Q(data-source="#{h(f[:id].to_s.sub('source_', '').upcase)}") : ''
+    # Source cells are always clickable (both yes and no) — they open a
+    # popover listing other companies that also import (or don't) from
+    # that country.
+    disabled = (present || is_source) ? '' : 'disabled'
+    %Q(<td class="cell cell--#{state}"><button class="cell-btn" #{disabled} aria-label="#{aria}" #{tip_attr} #{data_pop}#{data_source}><span class="cell-mark" aria-hidden="true">#{icon}</span></button></td>)
   end
 
   def self.render_row(c, idx)

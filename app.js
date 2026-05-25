@@ -36,6 +36,7 @@
     { id: "cars_bg",     label: "Профил в Cars.bg",     short: "Cars",  group: "Други канали", type: "url" },
   ];
   const SOURCE_LABEL = { USA: "САЩ", CA: "Канада", EU: "ЕС", KR: "Корея", JP: "Япония" };
+  const SOURCE_FLAG  = { USA: "🇺🇸",  CA: "🇨🇦",     EU: "🇪🇺", KR: "🇰🇷",    JP: "🇯🇵" };
   const INFO_KEY_IDS = ["registered", "website", "email", "phone", "viber"];
 
   const ICONS = {
@@ -307,6 +308,71 @@
     if (openPopoverCleanup) openPopoverCleanup();
   }
 
+  // ── Source-cell popover (click on country column) ──────────────────────
+  function openSourcePopover(anchor, company, code) {
+    closePopover();
+    const country = SOURCE_LABEL[code] || code;
+    const flag = SOURCE_FLAG[code] || "";
+    const importers = COMPANIES.filter((c) => c.sources.includes(code));
+    const hasIt = importers.some((c) => c.id === company.id);
+    const others = importers.filter((c) => c.id !== company.id);
+
+    const lead = hasIt
+      ? `<strong>${esc(company.name)}</strong> внася от ${esc(country)}.` +
+        (others.length ? ` Други вносители (${others.length}):` : "")
+      : `<strong>${esc(company.name)}</strong> не декларира внос от ${esc(country)}.` +
+        (importers.length ? ` Други вносители от ${esc(country)} (${importers.length}):` : "");
+
+    const showList = hasIt ? others : importers;
+    const listHtml = showList.length
+      ? `<ul class="po-co-list">${showList.map((o) => `<li><button class="po-co-btn" data-drawer="${esc(o.id)}">${esc(o.name)}</button></li>`).join("")}</ul>`
+      : "";
+
+    const pop = document.createElement("div");
+    pop.className = "popover popover-source";
+    pop.setAttribute("role", "dialog");
+    pop.innerHTML = `<div class="po-head">
+      <span class="po-eyebrow">Внася от</span>
+      <span class="po-title">${flag} ${esc(country)}</span>
+    </div>
+    <div class="po-body">
+      <p class="po-lead">${lead}</p>
+      ${listHtml}
+    </div>`;
+    document.body.appendChild(pop);
+
+    const a = anchor.getBoundingClientRect();
+    const pw = pop.offsetWidth, ph = pop.offsetHeight;
+    let left = a.left + a.width / 2 - pw / 2;
+    left = Math.max(12, Math.min(left, window.innerWidth - pw - 12));
+    let top = a.bottom + 8;
+    if (top + ph > window.innerHeight - 12) top = a.top - ph - 8;
+    pop.style.top = top + "px";
+    pop.style.left = left + "px";
+
+    pop.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-drawer]");
+      if (btn) {
+        closePopover();
+        openDrawer(btn.dataset.drawer);
+      }
+    });
+
+    const onDown = (e) => {
+      if (!pop.contains(e.target) && !anchor.contains(e.target)) closePopover();
+    };
+    const onKey = (e) => { if (e.key === "Escape") closePopover(); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+
+    openPopoverCleanup = () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+      pop.remove();
+      openPopoverCleanup = null;
+    };
+  }
+
   // ── Tooltip ────────────────────────────────────────────────────────────
   let tooltipEl = null;
   let tooltipTimer = null;
@@ -363,6 +429,12 @@
       if (drawerEl) { openDrawer(drawerEl.dataset.drawer); return; }
       const popEl = e.target.closest("[data-pop]");
       if (popEl) { openCompanyPopover(popEl, COMPANY_BY_ID[popEl.dataset.pop]); return; }
+      const sourceEl = e.target.closest("[data-source]");
+      if (sourceEl) {
+        const row = sourceEl.closest(".bodyrow[data-id]");
+        if (row) openSourcePopover(sourceEl, COMPANY_BY_ID[row.dataset.id], sourceEl.dataset.source);
+        return;
+      }
     });
 
     root.addEventListener("mouseover", (e) => {
