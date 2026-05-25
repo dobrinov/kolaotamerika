@@ -1894,8 +1894,6 @@
 }
   </script>
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div id="root"></div>
@@ -1999,356 +1997,125 @@
   </script>
 
   <script id="app-bundle">
-const { useState, useMemo, useRef, useEffect, useLayoutEffect } = React, FEATURES = [
-  // Основни — the info_amount bar + the 5 features it's calculated from.
-  // These should be the first thing a viewer scans.
-  { id: "info_amount", label: "Количество информация", short: "Инф.", group: "Основни", type: "info" },
-  { id: "registered", label: "Регистрирана фирма", short: "Фирма", group: "Основни", type: "company" },
-  { id: "website", label: "Уебсайт", short: "Сайт", group: "Основни", type: "url" },
-  { id: "email", label: "Имейл", short: "Имейл", group: "Основни", type: "email" },
-  { id: "phone", label: "Телефон за връзка", short: "Тел.", group: "Основни", type: "phone" },
-  { id: "viber", label: "Viber група", short: "Viber", group: "Основни", type: "url" },
-  { id: "source_usa", label: "Внос от САЩ", short: "САЩ", group: "Внася от", type: "value" },
-  { id: "source_ca", label: "Внос от Канада", short: "CA", group: "Внася от", type: "value" },
-  { id: "source_eu", label: "Внос от ЕС", short: "EU", group: "Внася от", type: "value" },
-  { id: "source_kr", label: "Внос от Корея", short: "KR", group: "Внася от", type: "value" },
-  { id: "source_jp", label: "Внос от Япония", short: "JP", group: "Внася от", type: "value" },
-  { id: "facebook", label: "Facebook страница", short: "FB", group: "Други канали", type: "url" },
-  { id: "instagram", label: "Instagram", short: "IG", group: "Други канали", type: "url" },
-  { id: "youtube", label: "YouTube канал", short: "YT", group: "Други канали", type: "url" },
-  { id: "tiktok", label: "TikTok", short: "TT", group: "Други канали", type: "url" },
-  { id: "mobile_bg", label: "Витрина в Mobile.bg", short: "Mobile", group: "Други канали", type: "url" },
-  { id: "cars_bg", label: "Профил в Cars.bg", short: "Cars", group: "Други канали", type: "url" }
-], RAW = JSON.parse(document.getElementById("company-data").textContent);
-function cleanUrl(u) {
-  return u.replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "");
-}
-function pickSocial(c, label) {
-  return (c.social || []).find((s) => s.label === label);
-}
-function urlValue(u) {
-  return u ? { value: u, display: cleanUrl(u) } : null;
-}
-function isRealLegal(legal) {
-  if (!legal) return !1;
-  const s = String(legal);
-  return !(s.startsWith("(") || s === "—");
-}
-function transformCompany(c) {
-  const facebook = pickSocial(c, "Facebook"), instagram = pickSocial(c, "Instagram"), viber = pickSocial(c, "Viber"), youtube = pickSocial(c, "YouTube"), tiktok = pickSocial(c, "TikTok"), mobile = pickSocial(c, "Mobile.bg") || pickSocial(c, "Mobile.bg (Център)"), cars = pickSocial(c, "Cars.bg");
-  let registered = !1;
-  c.eik && (registered = {
-    eik: c.eik,
-    name: isRealLegal(c.legal) ? c.legal : "(непълно име)",
-    date: c.founded || "—",
-    address: c.city || "—",
-    owner: c.owner || null,
-    capital: c.capitalText || null,
-    eikUrl: c.eikUrl || null
-  });
-  const verified = c.verified ? { value: "Потвърдено от каталога" } : !1, SOURCE_NAME = { USA: "САЩ", CA: "Канада", EU: "ЕС", KR: "Корея", JP: "Япония" }, sourceCell = (code) => (c.sources || []).includes(code) ? { value: "Активен внос от " + SOURCE_NAME[code] } : !1, igDisplay = instagram ? "@" + cleanUrl(instagram.url).replace(/^instagram\.com\//, "").replace(/\?.*$/, "") : null, fbDisplay = facebook ? cleanUrl(facebook.url).replace(/^facebook\.com/, "") : null, ytDisplay = youtube ? cleanUrl(youtube.url).replace(/^youtube\.com\//, "") : null, ttDisplay = tiktok ? cleanUrl(tiktok.url).replace(/^tiktok\.com\//, "") : null;
-  return {
-    id: c.id,
-    name: c.brand,
-    legalRaw: c.legal,
-    blurb: c.blurb,
-    location: c.city || "—",
-    founded: c.founded ? parseInt(c.founded.slice(0, 4), 10) : null,
-    foundedFull: c.founded,
-    capitalText: c.capitalText,
-    owner: c.owner,
-    eik: c.eik,
-    eikUrl: c.eikUrl,
-    sources: c.sources || [],
-    group: c.group,
-    isGroupHead: c.isGroupHead === !0,
-    isNew: c.isNew === !0,
-    values: {
-      registered,
-      verified,
-      source_usa: sourceCell("USA"),
-      source_ca: sourceCell("CA"),
-      source_eu: sourceCell("EU"),
-      source_kr: sourceCell("KR"),
-      source_jp: sourceCell("JP"),
-      website: c.web ? urlValue(c.web) : null,
-      facebook: facebook ? { value: facebook.url, display: fbDisplay } : null,
-      instagram: instagram ? { value: instagram.url, display: igDisplay } : null,
-      viber: viber ? { value: viber.url, display: "Viber група" } : null,
-      youtube: youtube ? { value: youtube.url, display: ytDisplay } : null,
-      tiktok: tiktok ? { value: tiktok.url, display: ttDisplay } : null,
-      mobile_bg: mobile ? { value: mobile.url, display: cleanUrl(mobile.url) } : null,
-      cars_bg: cars ? { value: cars.url, display: cleanUrl(cars.url) } : null,
-      phone: c.phone ? { value: c.phone, display: c.phone } : null,
-      email: c.email ? { value: c.email, display: c.email } : null
-    }
-  };
-}
-const COMPANIES = RAW.filter((c) => !c.hideFromList).map(transformCompany), INFO_KEY_IDS = ["registered", "website", "email", "phone", "viber"];
-function computeInfoPercent(company) {
-  const filled = INFO_KEY_IDS.filter((id) => company.values[id]).length;
-  return Math.round(filled / INFO_KEY_IDS.length * 100);
-}
-const LAST_UPDATE = (/* @__PURE__ */ new Date()).toLocaleDateString("bg-BG", { day: "numeric", month: "long", year: "numeric" });
-function CheckIcon({ size = 16 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 16 16", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("path", { d: "M3.5 8.5L6.5 11.5L12.5 4.5", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }));
-}
-function DashIcon({ size = 16 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 16 16", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("path", { d: "M4 8H12", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round" }));
-}
-function ExternalIcon({ size = 12 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 12 12", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("path", { d: "M4.5 2.5H9.5V7.5M9.5 2.5L5 7M3 4.5V9H7.5", stroke: "currentColor", strokeWidth: "1.3", strokeLinecap: "round", strokeLinejoin: "round" }));
-}
-function CopyIcon({ size = 12 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 12 12", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("rect", { x: "3.5", y: "3.5", width: "6", height: "6.5", rx: "1", stroke: "currentColor", strokeWidth: "1.2" }), /* @__PURE__ */ React.createElement("path", { d: "M2 7.5V2.5C2 2.22 2.22 2 2.5 2H7.5", stroke: "currentColor", strokeWidth: "1.2", strokeLinecap: "round" }));
-}
-function ArrowRight({ size = 12 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 12 12", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("path", { d: "M2.5 6H9.5M9.5 6L6 2.5M9.5 6L6 9.5", stroke: "currentColor", strokeWidth: "1.3", strokeLinecap: "round", strokeLinejoin: "round" }));
-}
-function SearchIcon({ size = 14 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 14 14", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("circle", { cx: "6", cy: "6", r: "3.5", stroke: "currentColor", strokeWidth: "1.4" }), /* @__PURE__ */ React.createElement("path", { d: "M8.7 8.7L11 11", stroke: "currentColor", strokeWidth: "1.4", strokeLinecap: "round" }));
-}
-function CloseIcon({ size = 14 }) {
-  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 14 14", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("path", { d: "M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5", stroke: "currentColor", strokeWidth: "1.4", strokeLinecap: "round" }));
-}
-function Tooltip({ children, content, disabled }) {
-  const [open, setOpen] = useState(!1), ref = useRef(null), [pos, setPos] = useState({ top: 0, left: 0 }), showTO = useRef(null), open_ = () => {
-    disabled || (clearTimeout(showTO.current), showTO.current = setTimeout(() => {
-      const r = ref.current?.getBoundingClientRect();
-      r && (setPos({ top: r.top - 8, left: r.left + r.width / 2 }), setOpen(!0));
-    }, 220));
-  }, close_ = () => {
-    clearTimeout(showTO.current), setOpen(!1);
-  };
-  return /* @__PURE__ */ React.createElement(
-    "span",
-    {
-      ref,
-      className: "tt-anchor",
-      onMouseEnter: open_,
-      onMouseLeave: close_,
-      onFocus: open_,
-      onBlur: close_
-    },
-    children,
-    open && content && ReactDOM.createPortal(
-      /* @__PURE__ */ React.createElement(
-        "span",
-        {
-          className: "tooltip",
-          style: { top: pos.top, left: pos.left, position: "fixed" },
-          role: "tooltip"
-        },
-        content
-      ),
-      document.body
-    )
-  );
-}
-function usePopover(anchorRef, open) {
-  const [pos, setPos] = useState({ top: 0, left: 0, placement: "bottom" }), popRef = useRef(null);
-  return useLayoutEffect(() => {
-    if (!open || !anchorRef.current) return;
-    const place = () => {
-      const a = anchorRef.current.getBoundingClientRect(), p = popRef.current?.getBoundingClientRect(), pw = p?.width || 320, ph = p?.height || 180, vw = window.innerWidth, vh = window.innerHeight;
-      let left = a.left + a.width / 2 - pw / 2;
-      left = Math.max(12, Math.min(left, vw - pw - 12));
-      let top = a.bottom + 8, placement = "bottom";
-      top + ph > vh - 12 && (top = a.top - ph - 8, placement = "top"), setPos({ top, left, placement });
-    };
-    place();
-    const f = () => place();
-    return window.addEventListener("scroll", f, !0), window.addEventListener("resize", f), () => {
-      window.removeEventListener("scroll", f, !0), window.removeEventListener("resize", f);
-    };
-  }, [open, anchorRef]), { popRef, pos };
-}
-function Row({ k, v, mono, copyable, onCopy }) {
-  const [copied, setCopied] = useState(!1);
-  return /* @__PURE__ */ React.createElement("div", { className: "po-row" }, /* @__PURE__ */ React.createElement("div", { className: "po-row-k" }, k), /* @__PURE__ */ React.createElement("div", { className: `po-row-v ${mono ? "mono" : ""}` }, /* @__PURE__ */ React.createElement("span", null, v), copyable && /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      className: "po-copy",
-      onClick: () => {
-        onCopy?.(), setCopied(!0), setTimeout(() => setCopied(!1), 1400);
-      },
-      title: "Копирай"
-    },
-    copied ? "Копирано" : /* @__PURE__ */ React.createElement(CopyIcon, null)
-  )));
-}
-function CellPopover({ feature, value, anchorRef, onClose }) {
-  const { popRef, pos } = usePopover(anchorRef, !0);
-  useEffect(() => {
-    const onKey = (e) => {
-      e.key === "Escape" && onClose();
-    }, onDown = (e) => {
-      popRef.current?.contains(e.target) || anchorRef.current?.contains(e.target) || onClose();
-    };
-    return document.addEventListener("keydown", onKey), document.addEventListener("mousedown", onDown), () => {
-      document.removeEventListener("keydown", onKey), document.removeEventListener("mousedown", onDown);
-    };
-  }, []);
-  const copy = (text) => {
-    navigator.clipboard?.writeText(text);
-  };
-  let body;
-  return feature.type === "company" ? body = /* @__PURE__ */ React.createElement("div", { className: "po-body" }, /* @__PURE__ */ React.createElement(Row, { k: "Юридическо име", v: value.name, mono: !0 }), /* @__PURE__ */ React.createElement(Row, { k: "ЕИК", v: value.eik, mono: !0, copyable: !0, onCopy: () => copy(value.eik) }), /* @__PURE__ */ React.createElement(Row, { k: "Регистрирана", v: value.date, mono: !0 }), /* @__PURE__ */ React.createElement(Row, { k: "Седалище", v: value.address }), value.owner && /* @__PURE__ */ React.createElement(Row, { k: "Собственост", v: value.owner }), value.capital && /* @__PURE__ */ React.createElement(Row, { k: "Капитал", v: value.capital }), value.eikUrl && /* @__PURE__ */ React.createElement("a", { className: "po-link", href: value.eikUrl, target: "_blank", rel: "noopener noreferrer" }, "Виж в Търговския регистър ", /* @__PURE__ */ React.createElement(ExternalIcon, null))) : feature.type === "url" ? body = /* @__PURE__ */ React.createElement("div", { className: "po-body" }, /* @__PURE__ */ React.createElement(Row, { k: "Адрес", v: value.display || value.value, mono: !0 }), /* @__PURE__ */ React.createElement("a", { className: "po-link", href: value.value, target: "_blank", rel: "noopener noreferrer" }, "Отвори ", /* @__PURE__ */ React.createElement(ExternalIcon, null))) : feature.type === "phone" ? body = /* @__PURE__ */ React.createElement("div", { className: "po-body" }, /* @__PURE__ */ React.createElement(Row, { k: "Номер", v: value.display, mono: !0, copyable: !0, onCopy: () => copy(value.value) }), /* @__PURE__ */ React.createElement("a", { className: "po-link", href: `tel:${value.value.replace(/[^+\d]/g, "")}` }, "Обади се ", /* @__PURE__ */ React.createElement(ArrowRight, null))) : feature.type === "email" ? body = /* @__PURE__ */ React.createElement("div", { className: "po-body" }, /* @__PURE__ */ React.createElement(Row, { k: "Имейл", v: value.display, mono: !0, copyable: !0, onCopy: () => copy(value.value) }), /* @__PURE__ */ React.createElement("a", { className: "po-link", href: `mailto:${value.value}` }, "Напиши имейл ", /* @__PURE__ */ React.createElement(ArrowRight, null))) : body = /* @__PURE__ */ React.createElement("div", { className: "po-body" }, /* @__PURE__ */ React.createElement("div", { className: "po-value" }, value.value)), /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      ref: popRef,
-      className: `popover popover--${pos.placement}`,
-      style: { top: pos.top, left: pos.left },
-      role: "dialog"
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "po-head" }, /* @__PURE__ */ React.createElement("span", { className: "po-eyebrow" }, feature.group), /* @__PURE__ */ React.createElement("span", { className: "po-title" }, feature.label)),
-    body
-  );
-}
-function FeatureCell({ company, feature }) {
-  const [open, setOpen] = useState(!1), anchorRef = useRef(null);
-  if (feature.type === "info") {
-    const pct = computeInfoPercent(company);
-    return /* @__PURE__ */ React.createElement("td", { className: "cell cell--info" }, /* @__PURE__ */ React.createElement("div", { className: "info-cell" }, /* @__PURE__ */ React.createElement("div", { className: "info-bar", "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("div", { className: "info-fill", style: { width: `${pct}%` } })), /* @__PURE__ */ React.createElement("div", { className: "info-pct mono" }, pct, "%")));
-  }
-  const v = company.values[feature.id], state = v ? "yes" : "no", present = state === "yes";
-  let tipPreview = null;
-  present ? feature.type === "company" ? tipPreview = `${v.name} · ЕИК ${v.eik}` : feature.type === "url" ? tipPreview = "Отвори" : feature.type === "phone" || feature.type === "email" ? tipPreview = v.display : v.value && (tipPreview = v.value) : tipPreview = "Не е налично";
-  const icon = /* @__PURE__ */ React.createElement(state === "yes" ? CheckIcon : DashIcon, null), label = state === "yes" ? "да" : "не";
-  if (present && (feature.type === "url" || feature.type === "email" || feature.type === "phone")) {
-    const firstPhone = feature.type === "phone" ? v.value.split(/\s*·\s*/)[0] : v.value, href = feature.type === "email" ? `mailto:${v.value}` : feature.type === "phone" ? `tel:${firstPhone.replace(/[^+\d]/g, "")}` : v.value;
-    return /* @__PURE__ */ React.createElement("td", { className: `cell cell--${state}` }, /* @__PURE__ */ React.createElement(Tooltip, { content: tipPreview }, /* @__PURE__ */ React.createElement(
-      "a",
-      {
-        ref: anchorRef,
-        className: "cell-btn",
-        href,
-        target: feature.type === "url" ? "_blank" : void 0,
-        rel: feature.type === "url" ? "noopener noreferrer" : void 0,
-        "aria-label": `${feature.label}: ${label}`
-      },
-      /* @__PURE__ */ React.createElement("span", { className: "cell-mark", "aria-hidden": "true" }, icon)
-    )));
-  }
-  return /* @__PURE__ */ React.createElement("td", { className: `cell cell--${state}` }, /* @__PURE__ */ React.createElement(Tooltip, { content: tipPreview }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      ref: anchorRef,
-      className: "cell-btn",
-      onClick: () => present && setOpen(!0),
-      disabled: !present,
-      "aria-label": `${feature.label}: ${label}`
-    },
-    /* @__PURE__ */ React.createElement("span", { className: "cell-mark", "aria-hidden": "true" }, icon)
-  )), open && /* @__PURE__ */ React.createElement(CellPopover, { feature, value: v, anchorRef, onClose: () => setOpen(!1) }));
-}
-function Stat({ k, v }) {
-  return /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("div", { className: "stat-k" }, k), /* @__PURE__ */ React.createElement("div", { className: "stat-v" }, v));
-}
-const SOURCE_LABEL = { USA: "САЩ", CA: "Канада", EU: "ЕС", KR: "Корея", JP: "Япония" };
-function DetailsDrawer({ company, onClose }) {
-  if (useEffect(() => {
-    const onKey = (e) => {
-      e.key === "Escape" && onClose();
-    };
-    return document.addEventListener("keydown", onKey), document.body.style.overflow = "hidden", () => {
-      document.removeEventListener("keydown", onKey), document.body.style.overflow = "";
-    };
-  }, []), !company) return null;
-  const reg = company.values.registered, groups = [...new Set(FEATURES.map((f) => f.group))], sourcesText = company.sources.length ? company.sources.map((s) => SOURCE_LABEL[s] || s).join(", ") : "—", tagline = company.group ? company.isGroupHead ? `Глава на групата ${company.group}` : `От групата ${company.group}` : company.legalRaw && /^\(/.test(company.legalRaw) ? company.legalRaw : "";
-  return /* @__PURE__ */ React.createElement("div", { className: "drawer-scrim", onClick: onClose }, /* @__PURE__ */ React.createElement("aside", { className: "drawer", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("header", { className: "drawer-head" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "drawer-eyebrow" }, "Профил на вносител"), /* @__PURE__ */ React.createElement("h2", { className: "drawer-title" }, company.name), tagline && /* @__PURE__ */ React.createElement("div", { className: "drawer-tagline" }, tagline)), /* @__PURE__ */ React.createElement("button", { className: "drawer-close", onClick: onClose, "aria-label": "Затвори" }, /* @__PURE__ */ React.createElement(CloseIcon, null))), /* @__PURE__ */ React.createElement("div", { className: "drawer-stats" }, /* @__PURE__ */ React.createElement(Stat, { k: "Седалище", v: company.location }), /* @__PURE__ */ React.createElement(Stat, { k: "Основана", v: company.founded || "—" }), /* @__PURE__ */ React.createElement(Stat, { k: "Внася от", v: sourcesText }), /* @__PURE__ */ React.createElement(Stat, { k: "Капитал", v: company.capitalText || "—" })), reg && /* @__PURE__ */ React.createElement("section", { className: "drawer-section" }, /* @__PURE__ */ React.createElement("h3", { className: "drawer-h3" }, "Юридическо лице"), /* @__PURE__ */ React.createElement("dl", { className: "drawer-dl" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "Име"), /* @__PURE__ */ React.createElement("dd", { className: "mono" }, reg.name)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "ЕИК"), /* @__PURE__ */ React.createElement("dd", { className: "mono" }, reg.eikUrl ? /* @__PURE__ */ React.createElement("a", { href: reg.eikUrl, target: "_blank", rel: "noopener noreferrer" }, reg.eik) : reg.eik)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "Регистрирана"), /* @__PURE__ */ React.createElement("dd", { className: "mono" }, reg.date)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "Седалище"), /* @__PURE__ */ React.createElement("dd", null, reg.address)), reg.owner && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "Собственост"), /* @__PURE__ */ React.createElement("dd", null, reg.owner)), reg.capital && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("dt", null, "Капитал"), /* @__PURE__ */ React.createElement("dd", null, reg.capital))), reg.eikUrl && /* @__PURE__ */ React.createElement("a", { className: "po-link", href: reg.eikUrl, target: "_blank", rel: "noopener noreferrer", style: { marginTop: 12 } }, "Виж в Търговския регистър ", /* @__PURE__ */ React.createElement(ExternalIcon, null))), company.blurb && /* @__PURE__ */ React.createElement("section", { className: "drawer-section" }, /* @__PURE__ */ React.createElement("h3", { className: "drawer-h3" }, "Бележки"), /* @__PURE__ */ React.createElement("p", { className: "drawer-blurb" }, company.blurb)), groups.map((g) => /* @__PURE__ */ React.createElement("section", { className: "drawer-section", key: g }, /* @__PURE__ */ React.createElement("h3", { className: "drawer-h3" }, g), /* @__PURE__ */ React.createElement("ul", { className: "drawer-list" }, FEATURES.filter((f) => f.group === g && f.type !== "info").map((f) => {
-    const val = company.values[f.id], state = val ? "yes" : "no", icon = /* @__PURE__ */ React.createElement(state === "yes" ? CheckIcon : DashIcon, null);
-    let valueContent = null;
-    if (state === "yes" && f.type !== "value") {
-      const display = val.display || val.value || val.name || "Да";
-      f.type === "url" && val.value ? valueContent = /* @__PURE__ */ React.createElement("a", { href: val.value, target: "_blank", rel: "noopener noreferrer", title: val.value }, "Отвори ↗") : f.type === "email" && val.value ? valueContent = /* @__PURE__ */ React.createElement("a", { href: `mailto:${val.value}` }, display) : f.type === "phone" && val.value ? valueContent = /* @__PURE__ */ React.createElement("a", { href: `tel:${val.value.replace(/[^+\d]/g, "")}` }, display) : f.type === "company" && val.eikUrl ? valueContent = /* @__PURE__ */ React.createElement("a", { href: val.eikUrl, target: "_blank", rel: "noopener noreferrer" }, display) : valueContent = display;
-    }
-    return /* @__PURE__ */ React.createElement("li", { key: f.id, className: `drawer-li ${state}` }, /* @__PURE__ */ React.createElement("span", { className: "drawer-li-mark" }, icon), /* @__PURE__ */ React.createElement("span", { className: "drawer-li-label" }, f.label), valueContent && /* @__PURE__ */ React.createElement("span", { className: "drawer-li-value" }, valueContent));
-  })))), /* @__PURE__ */ React.createElement("section", { className: "drawer-section drawer-report" }, /* @__PURE__ */ React.createElement("h3", { className: "drawer-h3" }, "Подай поправка"), /* @__PURE__ */ React.createElement("p", { className: "drawer-report-lead" }, "Видяхте грешка или липсваща информация? Изпратете я и ще обновим записа."), /* @__PURE__ */ React.createElement(
-    "a",
-    {
-      className: "po-link",
-      href: `mailto:update@kolaotamerika.com?subject=${encodeURIComponent("Поправка: " + company.name + " (" + company.id + ")")}&body=${encodeURIComponent(`Здравейте,
+(()=>{"use strict";const L=[{id:"info_amount",label:"Количество информация",short:"Инф.",group:"Основни",type:"info"},{id:"registered",label:"Регистрирана фирма",short:"Фирма",group:"Основни",type:"company"},{id:"website",label:"Уебсайт",short:"Сайт",group:"Основни",type:"url"},{id:"email",label:"Имейл",short:"Имейл",group:"Основни",type:"email"},{id:"phone",label:"Телефон за връзка",short:"Тел.",group:"Основни",type:"phone"},{id:"viber",label:"Viber група",short:"Viber",group:"Основни",type:"url"},{id:"source_usa",label:"Внос от САЩ",short:"САЩ",group:"Внася от",type:"value"},{id:"source_ca",label:"Внос от Канада",short:"CA",group:"Внася от",type:"value"},{id:"source_eu",label:"Внос от ЕС",short:"EU",group:"Внася от",type:"value"},{id:"source_kr",label:"Внос от Корея",short:"KR",group:"Внася от",type:"value"},{id:"source_jp",label:"Внос от Япония",short:"JP",group:"Внася от",type:"value"},{id:"facebook",label:"Facebook страница",short:"FB",group:"Други канали",type:"url"},{id:"instagram",label:"Instagram",short:"IG",group:"Други канали",type:"url"},{id:"youtube",label:"YouTube канал",short:"YT",group:"Други канали",type:"url"},{id:"tiktok",label:"TikTok",short:"TT",group:"Други канали",type:"url"},{id:"mobile_bg",label:"Витрина в Mobile.bg",short:"Mobile",group:"Други канали",type:"url"},{id:"cars_bg",label:"Профил в Cars.bg",short:"Cars",group:"Други канали",type:"url"}],H={USA:"САЩ",CA:"Канада",EU:"ЕС",KR:"Корея",JP:"Япония"},R=["registered","website","email","phone","viber"],s=e=>String(e??"").replace(/[&<>"']/g,t=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[t]),k=e=>String(e).replace(/^https?:\/\/(www\.)?/i,"").replace(/\/$/,""),y=(e,t)=>(e.social||[]).find(a=>a.label===t),V=e=>e?{value:e,display:k(e)}:null,W=e=>{if(!e)return!1;const t=String(e);return!(t.startsWith("(")||t==="—")},v={check:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',dash:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',ext:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2.5H9.5V7.5M9.5 2.5L5 7M3 4.5V9H7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',copy:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M2 7.5V2.5C2 2.22 2.22 2 2.5 2H7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',arrow:'<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6H9.5M9.5 6L6 2.5M9.5 6L6 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',close:'<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',sortAsc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 1.5L7 6H1L4 1.5Z" fill="currentColor"/></svg>',sortDesc:'<svg class="sort-arrow" width="8" height="10" viewBox="0 0 8 10" aria-hidden="true"><path d="M4 8.5L1 4H7L4 8.5Z" fill="currentColor"/></svg>'};function K(e){const t=y(e,"Facebook"),a=y(e,"Instagram"),l=y(e,"Viber"),o=y(e,"YouTube"),i=y(e,"TikTok"),r=y(e,"Mobile.bg")||y(e,"Mobile.bg (Център)"),n=y(e,"Cars.bg");let u=!1;e.eik&&(u={eik:e.eik,name:W(e.legal)?e.legal:"(непълно име)",date:e.founded||"—",address:e.city||"—",owner:e.owner||null,capital:e.capitalText||null,eikUrl:e.eikUrl||null});const h=f=>(e.sources||[]).includes(f)?{value:"Активен внос от "+H[f]}:!1,$=a?"@"+k(a.url).replace(/^instagram\.com\//,"").replace(/\?.*$/,""):null,w=t?k(t.url).replace(/^facebook\.com/,""):null,m=o?k(o.url).replace(/^youtube\.com\//,""):null,d=i?k(i.url).replace(/^tiktok\.com\//,""):null;return{id:e.id,name:e.brand,legalRaw:e.legal,blurb:e.blurb,location:e.city||"—",founded:e.founded?parseInt(e.founded.slice(0,4),10):null,foundedFull:e.founded,capitalText:e.capitalText,owner:e.owner,eik:e.eik,eikUrl:e.eikUrl,sources:e.sources||[],group:e.group,isGroupHead:e.isGroupHead===!0,isNew:e.isNew===!0,values:{registered:u,verified:e.verified?{value:"Потвърдено от каталога"}:!1,source_usa:h("USA"),source_ca:h("CA"),source_eu:h("EU"),source_kr:h("KR"),source_jp:h("JP"),website:e.web?V(e.web):null,facebook:t?{value:t.url,display:w}:null,instagram:a?{value:a.url,display:$}:null,viber:l?{value:l.url,display:"Viber група"}:null,youtube:o?{value:o.url,display:m}:null,tiktok:i?{value:i.url,display:d}:null,mobile_bg:r?{value:r.url,display:k(r.url)}:null,cars_bg:n?{value:n.url,display:k(n.url)}:null,phone:e.phone?{value:e.phone,display:e.phone}:null,email:e.email?{value:e.email,display:e.email}:null}}}const j=JSON.parse(document.getElementById("company-data").textContent).filter(e=>!e.hideFromList).map(K),I=Object.fromEntries(j.map(e=>[e.id,e])),Y=new Date().toLocaleDateString("bg-BG",{day:"numeric",month:"long",year:"numeric"});function D(e){const t=R.filter(a=>e.values[a]).length;return Math.round(t/R.length*100)}let g={col:"info_amount",dir:"desc"};function G(e){g.col===e?g={col:e,dir:g.dir==="asc"?"desc":"asc"}:g={col:e,dir:e==="name"?"asc":"desc"},P()}function q(){const{col:e,dir:t}=g,a=l=>e==="name"?l.name:e==="info_amount"?D(l):l.values[e]?1:0;return[...j].sort((l,o)=>{const i=a(l),r=a(o);let n=typeof i=="string"?i.localeCompare(r,"bg"):i-r;return t==="desc"&&(n=-n),n===0&&e==="info_amount"&&(n=(o.values.registered?1:0)-(l.values.registered?1:0)),n===0&&(n=l.name.localeCompare(o.name,"bg")),n})}function J(e){const t=D(e);return`<td class="cell cell--info"><div class="info-cell"><div class="info-bar" aria-hidden="true"><div class="info-fill" style="width:${t}%"></div></div><div class="info-pct mono">${t}%</div></div></td>`}function Z(e,t){if(t.type==="info")return J(e);const a=e.values[t.id],l=a?"yes":"no",o=l==="yes",i=o?v.check:v.dash,r=o?"да":"не",n=`${s(t.label)}: ${r}`;let u="Не е налично";o&&(t.type==="company"?u=`${a.name} · ЕИК ${a.eik}`:t.type==="url"?u="Отвори":t.type==="phone"||t.type==="email"?u=a.display:a.value&&(u=a.value));const h=`data-tip="${s(u)}"`;if(o&&(t.type==="url"||t.type==="email"||t.type==="phone")){const d=t.type==="phone"?a.value.split(/\s*·\s*/)[0]:a.value,f=t.type==="email"?`mailto:${a.value}`:t.type==="phone"?`tel:${d.replace(/[^+\d]/g,"")}`:a.value,C=t.type==="url"?' target="_blank" rel="noopener noreferrer"':"";return`<td class="cell cell--yes"><a class="cell-btn" href="${s(f)}"${C} aria-label="${n}" ${h}><span class="cell-mark" aria-hidden="true">${i}</span></a></td>`}const w=o&&t.type==="company"?`data-pop="${s(e.id)}"`:"";return`<td class="cell cell--${l}"><button class="cell-btn" ${o?"":"disabled"} aria-label="${n}" ${h} ${w}><span class="cell-mark" aria-hidden="true">${i}</span></button></td>`}function z(e,t){const a=e.founded?`<div class="cmeta"><span>от ${s(e.founded)}</span></div>`:"",l=L.map(o=>Z(e,o)).join("");return`<tr class="bodyrow">
+      <th class="namecell sticky-col" scope="row">
+        <div class="rank">${String(t+1).padStart(2,"0")}</div>
+        <div class="namebox">
+          <div class="cname">${s(e.name)}</div>
+          ${a}
+        </div>
+      </th>
+      ${l}
+      <td class="endcell"><button class="details-btn" data-drawer="${s(e.id)}">Детайли ${v.arrow}</button></td>
+    </tr>`}function Q(){const e=[];let t=null;L.forEach(r=>{!t||t.name!==r.group?(t={name:r.group,count:1},e.push(t)):t.count++});const a=`<tr class="grouprow">
+      <th class="ghead sticky-col" scope="col"><span class="ghead-label">Вносител</span></th>
+      ${e.map(r=>`<th class="ghead ghead-group" colspan="${r.count}" scope="colgroup"><span class="ghead-group-label">${s(r.name)}</span></th>`).join("")}
+      <th class="ghead ghead-end" scope="col"></th>
+    </tr>`,l=g.col==="name",o=l?g.dir==="asc"?v.sortAsc:v.sortDesc:"",i=`<tr class="headrow">
+      <th class="head sticky-col head-sortable ${l?"head-sort-active":""}" scope="col" data-sort="name" aria-sort="${l?g.dir==="asc"?"ascending":"descending":"none"}">
+        <span class="head-label">Компания${o}</span>
+      </th>
+      ${L.map(r=>{const n=g.col===r.id,u=n?g.dir==="asc"?v.sortAsc:v.sortDesc:"";return`<th class="head head-feat head-sortable ${n?"head-sort-active":""}" scope="col" data-sort="${s(r.id)}" data-tip="${s(r.label)}" aria-sort="${n?g.dir==="asc"?"ascending":"descending":"none"}">
+          <span class="head-feat-label">${s(r.short)}${u}</span>
+        </th>`}).join("")}
+      <th class="head head-end" scope="col"></th>
+    </tr>`;return a+i}function P(){document.getElementById("thead").innerHTML=Q(),document.getElementById("tbody").innerHTML=q().map(z).join("")}let x=null;function X(e){T();const t=I[e];if(!t)return;const a=t.values.registered,l=[...new Set(L.map(c=>c.group))],o=t.sources.length?t.sources.map(c=>H[c]||c).join(", "):"—",i=t.group?t.isGroupHead?`Глава на групата ${t.group}`:`От групата ${t.group}`:t.legalRaw&&/^\(/.test(t.legalRaw)?t.legalRaw:"",r=a?`<section class="drawer-section">
+      <h3 class="drawer-h3">Юридическо лице</h3>
+      <dl class="drawer-dl">
+        <div><dt>Име</dt><dd class="mono">${s(a.name)}</dd></div>
+        <div><dt>ЕИК</dt><dd class="mono">${a.eikUrl?`<a href="${s(a.eikUrl)}" target="_blank" rel="noopener noreferrer">${s(a.eik)}</a>`:s(a.eik)}</dd></div>
+        <div><dt>Регистрирана</dt><dd class="mono">${s(a.date)}</dd></div>
+        <div><dt>Седалище</dt><dd>${s(a.address)}</dd></div>
+        ${a.owner?`<div><dt>Собственост</dt><dd>${s(a.owner)}</dd></div>`:""}
+        ${a.capital?`<div><dt>Капитал</dt><dd>${s(a.capital)}</dd></div>`:""}
+      </dl>
+      ${a.eikUrl?`<a class="po-link" href="${s(a.eikUrl)}" target="_blank" rel="noopener noreferrer" style="margin-top:12px">Виж в Търговския регистър ${v.ext}</a>`:""}
+    </section>`:"",n=t.blurb?`<section class="drawer-section">
+      <h3 class="drawer-h3">Бележки</h3>
+      <p class="drawer-blurb">${s(t.blurb)}</p>
+    </section>`:"";function u(c){const p=t.values[c.id],B=p?"yes":"no",ae=B==="yes"?v.check:v.dash;let E="";if(B==="yes"&&c.type!=="value"){const _=p.display||p.value||p.name||"Да";c.type==="url"&&p.value?E=`<span class="drawer-li-value"><a href="${s(p.value)}" target="_blank" rel="noopener noreferrer" title="${s(p.value)}">Отвори ↗</a></span>`:c.type==="email"&&p.value?E=`<span class="drawer-li-value"><a href="mailto:${s(p.value)}">${s(_)}</a></span>`:c.type==="phone"&&p.value?E=`<span class="drawer-li-value"><a href="tel:${p.value.replace(/[^+\d]/g,"")}">${s(_)}</a></span>`:c.type==="company"&&p.eikUrl?E=`<span class="drawer-li-value"><a href="${s(p.eikUrl)}" target="_blank" rel="noopener noreferrer">${s(_)}</a></span>`:E=`<span class="drawer-li-value">${s(_)}</span>`}return`<li class="drawer-li ${B}">
+        <span class="drawer-li-mark">${ae}</span>
+        <span class="drawer-li-label">${s(c.label)}</span>
+        ${E}
+      </li>`}const h=l.map(c=>`<section class="drawer-section">
+      <h3 class="drawer-h3">${s(c)}</h3>
+      <ul class="drawer-list">${L.filter(p=>p.group===c&&p.type!=="info").map(u).join("")}</ul>
+    </section>`).join(""),$=encodeURIComponent("Поправка: "+t.name+" ("+t.id+")"),w=encodeURIComponent(`Здравейте,
 
-Искам да подам следната актуализация за ` + company.name + (company.eik ? " (ЕИК " + company.eik + ")" : "") + `:
+Искам да подам следната актуализация за `+t.name+(t.eik?" (ЕИК "+t.eik+")":"")+`:
 
 [опишете промяната тук]
 
 Източник на информацията:
 [линк или описание]
 
-Благодаря!`)}`
-    },
-    "Изпрати имейл до update@kolaotamerika.com ",
-    /* @__PURE__ */ React.createElement(ExternalIcon, null)
-  ))));
-}
-function SortArrow({ dir }) {
-  return /* @__PURE__ */ React.createElement("svg", { className: "sort-arrow", width: "8", height: "10", viewBox: "0 0 8 10", "aria-hidden": "true" }, dir === "asc" ? /* @__PURE__ */ React.createElement("path", { d: "M4 1.5L7 6H1L4 1.5Z", fill: "currentColor" }) : /* @__PURE__ */ React.createElement("path", { d: "M4 8.5L1 4H7L4 8.5Z", fill: "currentColor" }));
-}
-function App() {
-  const [sortBy, setSortBy] = useState({ col: "info_amount", dir: "desc" }), [drawerId, setDrawerId] = useState(null), setSort = (col) => {
-    setSortBy(
-      (prev) => prev.col === col ? { col, dir: prev.dir === "asc" ? "desc" : "asc" } : { col, dir: col === "name" ? "asc" : "desc" }
-    );
-  }, filtered = useMemo(() => {
-    const { col, dir } = sortBy, keyOf = (c) => col === "name" ? c.name : col === "info_amount" ? computeInfoPercent(c) : c.values[col] ? 1 : 0;
-    return [...COMPANIES].sort((a, b) => {
-      const ak = keyOf(a), bk = keyOf(b);
-      let cmp = typeof ak == "string" ? ak.localeCompare(bk, "bg") : ak - bk;
-      return dir === "desc" && (cmp = -cmp), cmp === 0 && col === "info_amount" && (cmp = (b.values.registered ? 1 : 0) - (a.values.registered ? 1 : 0)), cmp === 0 && (cmp = a.name.localeCompare(b.name, "bg")), cmp;
-    });
-  }, [sortBy]), groups = useMemo(() => {
-    const out = [];
-    let cur = null;
-    return FEATURES.forEach((f) => {
-      !cur || cur.name !== f.group ? (cur = { name: f.group, count: 1 }, out.push(cur)) : cur.count++;
-    }), out;
-  }, []), drawerCompany = COMPANIES.find((c) => c.id === drawerId);
-  return /* @__PURE__ */ React.createElement("div", { className: "page" }, /* @__PURE__ */ React.createElement("section", { className: "hero" }, /* @__PURE__ */ React.createElement("div", { className: "hero-inner" }, /* @__PURE__ */ React.createElement("div", { className: "hero-kicker" }, "колаотамерика"), /* @__PURE__ */ React.createElement("h1", { className: "hero-title" }, "Кой внася коли от Канада, Америка, Южна Корея, Япония, Европа?"), /* @__PURE__ */ React.createElement("p", { className: "hero-lead" }, "Каталог на фирмите, занимаващи се с внос на коли в България."))), /* @__PURE__ */ React.createElement("section", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "table-scroll with-shadow" }, /* @__PURE__ */ React.createElement("table", { className: "ctable" }, /* @__PURE__ */ React.createElement("colgroup", null, /* @__PURE__ */ React.createElement("col", { style: { width: 280 } }), FEATURES.map((f) => /* @__PURE__ */ React.createElement("col", { key: f.id, style: { width: 92 } })), /* @__PURE__ */ React.createElement("col", { style: { width: 130 } })), /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", { className: "grouprow" }, /* @__PURE__ */ React.createElement("th", { className: "ghead sticky-col", scope: "col" }, /* @__PURE__ */ React.createElement("span", { className: "ghead-label" }, "Вносител")), groups.map((g) => /* @__PURE__ */ React.createElement("th", { key: g.name, className: "ghead ghead-group", colSpan: g.count, scope: "colgroup" }, /* @__PURE__ */ React.createElement("span", { className: "ghead-group-label" }, g.name))), /* @__PURE__ */ React.createElement("th", { className: "ghead ghead-end", scope: "col" })), /* @__PURE__ */ React.createElement("tr", { className: "headrow" }, /* @__PURE__ */ React.createElement(
-    "th",
-    {
-      className: `head sticky-col head-sortable ${sortBy.col === "name" ? "head-sort-active" : ""}`,
-      scope: "col",
-      onClick: () => setSort("name"),
-      "aria-sort": sortBy.col === "name" ? sortBy.dir === "asc" ? "ascending" : "descending" : "none"
-    },
-    /* @__PURE__ */ React.createElement("span", { className: "head-label" }, "Компания", sortBy.col === "name" && /* @__PURE__ */ React.createElement(SortArrow, { dir: sortBy.dir }))
-  ), FEATURES.map((f) => {
-    const active = sortBy.col === f.id;
-    return /* @__PURE__ */ React.createElement(
-      "th",
-      {
-        key: f.id,
-        className: `head head-feat head-sortable ${active ? "head-sort-active" : ""}`,
-        scope: "col",
-        onClick: () => setSort(f.id),
-        "aria-sort": active ? sortBy.dir === "asc" ? "ascending" : "descending" : "none"
-      },
-      /* @__PURE__ */ React.createElement(Tooltip, { content: f.label }, /* @__PURE__ */ React.createElement("span", { className: "head-feat-label" }, f.short, active && /* @__PURE__ */ React.createElement(SortArrow, { dir: sortBy.dir })))
-    );
-  }), /* @__PURE__ */ React.createElement("th", { className: "head head-end", scope: "col" }))), /* @__PURE__ */ React.createElement("tbody", null, filtered.map((c, idx) => /* @__PURE__ */ React.createElement("tr", { key: c.id, className: "bodyrow" }, /* @__PURE__ */ React.createElement("th", { className: "namecell sticky-col", scope: "row" }, /* @__PURE__ */ React.createElement("div", { className: "rank" }, String(idx + 1).padStart(2, "0")), /* @__PURE__ */ React.createElement("div", { className: "namebox" }, /* @__PURE__ */ React.createElement("div", { className: "cname" }, c.name), c.founded && /* @__PURE__ */ React.createElement("div", { className: "cmeta" }, /* @__PURE__ */ React.createElement("span", null, "от ", c.founded)))), FEATURES.map((f) => /* @__PURE__ */ React.createElement(FeatureCell, { key: f.id, company: c, feature: f })), /* @__PURE__ */ React.createElement("td", { className: "endcell" }, /* @__PURE__ */ React.createElement("button", { className: "details-btn", onClick: () => setDrawerId(c.id) }, "Детайли ", /* @__PURE__ */ React.createElement(ArrowRight, null))))))))), /* @__PURE__ */ React.createElement("footer", { className: "foot" }, /* @__PURE__ */ React.createElement("div", { className: "foot-inner" }, /* @__PURE__ */ React.createElement("div", null, "© 2026 колаотамерика"), /* @__PURE__ */ React.createElement("a", { className: "foot-cta", href: "mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка" }, "Подай вносител или поправка →"), /* @__PURE__ */ React.createElement("span", { className: "meta-pill" }, /* @__PURE__ */ React.createElement("span", { className: "dot" }), " Последна актуализация: ", LAST_UPDATE))), drawerCompany && /* @__PURE__ */ React.createElement(DetailsDrawer, { company: drawerCompany, onClose: () => setDrawerId(null) }));
-}
-ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
+Благодаря!`),m=`<section class="drawer-section drawer-report">
+      <h3 class="drawer-h3">Подай поправка</h3>
+      <p class="drawer-report-lead">Видяхте грешка или липсваща информация? Изпратете я и ще обновим записа.</p>
+      <a class="po-link" href="mailto:update@kolaotamerika.com?subject=${$}&body=${w}">Изпрати имейл до update@kolaotamerika.com ${v.ext}</a>
+    </section>`,d=document.createElement("div");d.className="drawer-scrim",d.innerHTML=`<aside class="drawer">
+      <header class="drawer-head">
+        <div>
+          <div class="drawer-eyebrow">Профил на вносител</div>
+          <h2 class="drawer-title">${s(t.name)}</h2>
+          ${i?`<div class="drawer-tagline">${s(i)}</div>`:""}
+        </div>
+        <button class="drawer-close" aria-label="Затвори">${v.close}</button>
+      </header>
+      <div class="drawer-stats">
+        <div class="stat"><div class="stat-k">Седалище</div><div class="stat-v">${s(t.location)}</div></div>
+        <div class="stat"><div class="stat-k">Основана</div><div class="stat-v">${s(t.founded||"—")}</div></div>
+        <div class="stat"><div class="stat-k">Внася от</div><div class="stat-v">${s(o)}</div></div>
+        <div class="stat"><div class="stat-k">Капитал</div><div class="stat-v">${s(t.capitalText||"—")}</div></div>
+      </div>
+      ${r}
+      ${n}
+      ${h}
+      ${m}
+    </aside>`,document.body.appendChild(d),document.body.style.overflow="hidden",d.querySelector(".drawer").addEventListener("click",c=>c.stopPropagation()),d.addEventListener("click",T),d.querySelector(".drawer-close").addEventListener("click",T);const C=c=>{c.key==="Escape"&&T()};document.addEventListener("keydown",C),x=()=>{document.removeEventListener("keydown",C),d.remove(),document.body.style.overflow="",x=null}}function T(){x&&x()}let M=null;function ee(e,t){S();const a=t.values.registered;if(!a)return;const l=[["Юридическо име",a.name,!0,!1],["ЕИК",a.eik,!0,!0],["Регистрирана",a.date,!0,!1],["Седалище",a.address,!1,!1],a.owner&&["Собственост",a.owner,!1,!1],a.capital&&["Капитал",a.capital,!1,!1]].filter(Boolean),o=document.createElement("div");o.className="popover",o.setAttribute("role","dialog"),o.innerHTML=`<div class="po-head">
+      <span class="po-eyebrow">Основни</span>
+      <span class="po-title">Регистрирана фирма</span>
+    </div>
+    <div class="po-body">
+      ${l.map(([m,d,f,C])=>`<div class="po-row">
+        <div class="po-row-k">${s(m)}</div>
+        <div class="po-row-v ${f?"mono":""}">
+          <span>${s(d)}</span>
+          ${C?`<button class="po-copy" data-copy="${s(d)}" title="Копирай">${v.copy}</button>`:""}
+        </div>
+      </div>`).join("")}
+      ${a.eikUrl?`<a class="po-link" href="${s(a.eikUrl)}" target="_blank" rel="noopener noreferrer">Виж в Търговския регистър ${v.ext}</a>`:""}
+    </div>`,document.body.appendChild(o);const i=e.getBoundingClientRect(),r=o.offsetWidth,n=o.offsetHeight;let u=i.left+i.width/2-r/2;u=Math.max(12,Math.min(u,window.innerWidth-r-12));let h=i.bottom+8;h+n>window.innerHeight-12&&(h=i.top-n-8),o.style.top=h+"px",o.style.left=u+"px",o.addEventListener("click",m=>{const d=m.target.closest("[data-copy]");if(d){navigator.clipboard?.writeText(d.dataset.copy);const f=d.innerHTML;d.textContent="Копирано",setTimeout(()=>{d.innerHTML=f},1400)}});const $=m=>{!o.contains(m.target)&&!e.contains(m.target)&&S()},w=m=>{m.key==="Escape"&&S()};document.addEventListener("mousedown",$),document.addEventListener("keydown",w),M=()=>{document.removeEventListener("mousedown",$),document.removeEventListener("keydown",w),o.remove(),M=null}}function S(){M&&M()}let b=null,A=null,U=null;function N(e){const t=e.dataset.tip;t&&(clearTimeout(A),U=e,A=setTimeout(()=>{if(U!==e)return;const a=e.getBoundingClientRect();b||(b=document.createElement("span"),b.className="tooltip",b.setAttribute("role","tooltip"),document.body.appendChild(b)),b.textContent=t,b.style.top=a.top-8+"px",b.style.left=a.left+a.width/2+"px",b.style.display=""},220))}function O(){clearTimeout(A),U=null,b&&(b.style.display="none")}function te(){const e=document.querySelector(".table-scroll");if(!e)return;const t=()=>{e.classList.toggle("is-scrolled",e.scrollLeft>2),e.classList.toggle("is-end",e.scrollLeft+e.clientWidth>=e.scrollWidth-2)};e.addEventListener("scroll",t,{passive:!0}),t()}function F(){const e=document.getElementById("root");e.innerHTML=`<div class="page">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="hero-kicker">колаотамерика</div>
+          <h1 class="hero-title">Кой внася коли от Канада, Америка, Южна Корея, Япония, Европа?</h1>
+          <p class="hero-lead">Каталог на фирмите, занимаващи се с внос на коли в България.</p>
+        </div>
+      </section>
+      <section class="table-wrap">
+        <div class="table-scroll with-shadow">
+          <table class="ctable">
+            <colgroup>
+              <col style="width:280px">
+              ${L.map(()=>'<col style="width:92px">').join("")}
+              <col style="width:130px">
+            </colgroup>
+            <thead id="thead"></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+      <footer class="foot">
+        <div class="foot-inner">
+          <div>© 2026 колаотамерика</div>
+          <a class="foot-cta" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка">Подай вносител или поправка →</a>
+          <span class="meta-pill"><span class="dot"></span> Последна актуализация: ${s(Y)}</span>
+        </div>
+      </footer>
+    </div>`,P(),te(),e.addEventListener("click",t=>{const a=t.target.closest("[data-sort]");if(a){G(a.dataset.sort);return}const l=t.target.closest("[data-drawer]");if(l){X(l.dataset.drawer);return}const o=t.target.closest("[data-pop]");if(o){ee(o,I[o.dataset.pop]);return}}),e.addEventListener("mouseover",t=>{const a=t.target.closest("[data-tip]");a&&N(a)}),e.addEventListener("mouseout",t=>{t.target.closest("[data-tip]")&&O()}),e.addEventListener("focusin",t=>{const a=t.target.closest("[data-tip]");a&&N(a)}),e.addEventListener("focusout",O)}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",F):F()})();
 
   </script>
 
-  <script>
-    // Toggle "is-scrolled" on the scroll container so the sticky-column shadow appears.
-    document.addEventListener("DOMContentLoaded", () => {
-      const obs = new MutationObserver(() => {
-        const el = document.querySelector(".table-scroll");
-        if (!el || el.dataset.bound) return;
-        el.dataset.bound = "1";
-        const update = () => {
-          el.classList.toggle("is-scrolled", el.scrollLeft > 2);
-          el.classList.toggle("is-end", el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
-        };
-        el.addEventListener("scroll", update, { passive: true });
-        update();
-      });
-      obs.observe(document.body, { childList: true, subtree: true });
-    });
-  </script>
 </body>
 </html>

@@ -187,24 +187,16 @@ module Build
     (</script>)
   }mx
 
-  # Compile app.jsx via esbuild (npx) into plain JS using
-  # React.createElement. Output is the script body that goes inside the
-  # <script id="app-bundle"> tag in index.html.
-  def self.compile_app(jsx_path: 'app.jsx')
-    return nil unless File.exist?(jsx_path)
-    cmd = [
-      'npx', '--yes', 'esbuild',
-      '--loader:.jsx=jsx',
-      '--jsx-factory=React.createElement',
-      '--jsx-fragment=React.Fragment',
-      '--target=es2020',
-      '--charset=utf8',
-      '--minify-syntax',
-      jsx_path
-    ]
+  # Minify app.js via esbuild (npx). The script is plain vanilla JS — no
+  # JSX, no framework — so esbuild only does minification. If esbuild is
+  # unavailable, fall back to the raw source unchanged.
+  def self.compile_app(js_path: 'app.js')
+    return nil unless File.exist?(js_path)
+    cmd = ['npx', '--yes', 'esbuild', '--target=es2020', '--charset=utf8', '--minify', js_path]
     out = IO.popen([*cmd, err: [:child, :out]], &:read)
-    raise "esbuild failed:\n#{out}" unless $?.success?
-    out
+    return out if $?.success?
+    warn "esbuild failed, falling back to raw app.js:\n#{out}"
+    File.read(js_path)
   end
 
   def self.splice_app_bundle(html, body)
