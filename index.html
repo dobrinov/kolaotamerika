@@ -583,9 +583,19 @@
       max-width: 1280px; margin: 0 auto;
       padding: 10px 32px;
       display: flex; justify-content: space-between; align-items: center;
+      gap: 16px;
       font-size: 12.5px;
       color: var(--ink-3);
     }
+    .foot-cta {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+      padding-bottom: 1px;
+      transition: border-color .15s;
+    }
+    .foot-cta:hover { border-bottom-color: var(--accent); }
     .foot-links { display: flex; gap: 18px; }
     .foot-links a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 1px; }
     .foot-links a:hover { border-bottom-color: var(--ink-2); }
@@ -829,6 +839,12 @@
     .drawer-li-value a:hover { border-bottom-color: var(--accent); }
     .drawer-li.no .drawer-li-label { color: var(--ink-3); }
     .drawer-blurb { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+    .drawer-report-lead {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-2);
+      margin: 0 0 12px;
+    }
 
     /* The Юридическо лице dl: same link styling */
     .drawer-dl a {
@@ -2569,6 +2585,19 @@
                 </ul>
               </section>
             ))}
+
+            <section className="drawer-section drawer-report">
+              <h3 className="drawer-h3">Подай поправка</h3>
+              <p className="drawer-report-lead">
+                Видяхте грешка или липсваща информация? Изпратете я и ще обновим записа.
+              </p>
+              <a
+                className="po-link"
+                href={`mailto:update@kolaotamerika.com?subject=${encodeURIComponent("Поправка: " + company.name + " (" + company.id + ")")}&body=${encodeURIComponent("Здравейте,\n\nИскам да подам следната актуализация за " + company.name + (company.eik ? " (ЕИК " + company.eik + ")" : "") + ":\n\n[опишете промяната тук]\n\nИзточник на информацията:\n[линк или описание]\n\nБлагодаря!")}`}
+              >
+                Изпрати имейл до update@kolaotamerika.com <ExternalIcon />
+              </a>
+            </section>
           </aside>
         </div>
       );
@@ -2736,6 +2765,9 @@
           <footer className="foot">
             <div className="foot-inner">
               <div>© 2026 колаотамерика</div>
+              <a className="foot-cta" href="mailto:update@kolaotamerika.com?subject=Подай%20вносител%20или%20поправка">
+                Подай вносител или поправка →
+              </a>
               <span className="meta-pill"><span className="dot" /> Последна актуализация: {LAST_UPDATE}</span>
             </div>
           </footer>
