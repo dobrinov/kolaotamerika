@@ -686,6 +686,105 @@
       text-transform: uppercase;
     }
 
+    /* ── ops mock (team chat + partner marketplace) ────────────────── */
+    .ops-mock { display: flex; flex-direction: column; }
+    .ops-section { padding: 20px 22px; }
+    .ops-section + .ops-section {
+      border-top: 1px solid var(--rule);
+      background: var(--paper-2);
+    }
+    .ops-label {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 14px;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .ops-label .count {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--ink-4);
+      letter-spacing: 0.1em;
+    }
+    .team-msgs { display: grid; gap: 8px; margin-bottom: 12px; }
+    .tmsg {
+      padding: 10px 12px;
+      background: var(--bg-2);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .tmsg.self { background: var(--ink); color: var(--paper); }
+    .tmsg.self .trole { color: var(--ink-4); }
+    .tmsg.self .ttext { color: var(--paper); }
+    .tmsg.self .twhen { color: var(--ink-4); }
+    .tname {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 3px;
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .trole {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      font-weight: 400;
+    }
+    .ttext { color: var(--ink-2); line-height: 1.4; }
+    .twhen {
+      font-family: var(--mono);
+      font-size: 9px; letter-spacing: 0.08em;
+      color: var(--ink-4);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    .tcompose {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.12em;
+      color: var(--ink-4);
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: var(--bg);
+      border: 1px dashed var(--rule);
+      border-radius: 999px;
+      display: flex; gap: 14px;
+    }
+    .tcompose i { font-style: normal; }
+
+    .partners { display: grid; gap: 10px; }
+    .partner {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 12px;
+      align-items: center;
+    }
+    .pname { font-weight: 600; font-size: 14px; grid-column: 1; grid-row: 1; }
+    .psub  { font-size: 12px; color: var(--ink-2); grid-column: 1; grid-row: 2; margin-top: 2px; }
+    .pmeta {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      color: var(--ink-3);
+      grid-column: 1; grid-row: 3;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .pmeta .star { color: var(--accent); margin-right: 4px; }
+    .partner .btn { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+    .partner-more {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      text-align: center;
+      padding-top: 8px;
+    }
+
     .share-link {
       background: var(--paper);
       border: 1px solid var(--rule);
@@ -1285,11 +1384,100 @@
     </div>
   </section>
 
+  <!-- ── OPS FEATURE (team chat + partner marketplace) ───────────── -->
+  <section class="section wrap" id="ops">
+    <div class="section-head">
+      <div class="section-tag">
+        <span class="num">04</span>
+        Екип + партньори
+      </div>
+      <h2 class="display xl">
+        Не сте сами в това.
+        <span style="color: var(--ink-3)">Екипът и партньорите ви — на едно място.</span>
+      </h2>
+    </div>
+
+    <div class="feature-2col reverse">
+      <div class="feat-copy">
+        <p class="lede">
+          Вътрешен чат за вас и колегите ви (мениджър, механик, офис) — отделно от клиентския. И каталог с партньорите, които довършват колата след вноса: кодиране за европейския регион, преобразуване на стоповете, регистрация, диагностика.
+        </p>
+        <ul class="feat-list">
+          <li><span class="k">→</span><div><strong>Вътрешен чат — отделно от клиентския</strong><div class="desc">Колегите ви виждат само това, което трябва. Споменавания, файлове, бордове по проект.</div></div></li>
+          <li><span class="k">→</span><div><strong>Задачи и нотификации</strong><div class="desc">„Качи Title“, „Звънни на Георги в петък“ — без губещи се напомняния по групи.</div></div></li>
+          <li><span class="k">→</span><div><strong>Партньори за след вноса</strong><div class="desc">Кодиране BMW / Mercedes / Audi, преобразуване на стоповете, диагностика — всички с рейтинг и цена.</div></div></li>
+          <li><span class="k">→</span><div><strong>1 клик — реферал към клиента</strong><div class="desc">„X5 е готова — препоръчваме EuroCode BG за европейския навигационен модул.“ Реферал-комисионна по желание.</div></div></li>
+        </ul>
+      </div>
+
+      <div class="mock">
+        <div class="mock-bar">
+          <span>операции · екип + партньори</span>
+          <span class="dots"><i></i><i></i><i></i></span>
+        </div>
+        <div class="ops-mock">
+          <div class="ops-section">
+            <div class="ops-label">
+              <span>екип · 2021 BMW X5 · вътрешен чат</span>
+              <span class="count">4 в проекта</span>
+            </div>
+            <div class="team-msgs">
+              <div class="tmsg">
+                <div class="tname">Иван <span class="trole">механик</span></div>
+                <div class="ttext">X5 е готова за товарене. VIN: <span class="mono">5UXCR6C5XKLL12345</span></div>
+                <div class="twhen">15:42</div>
+              </div>
+              <div class="tmsg">
+                <div class="tname">Мария <span class="trole">офис</span></div>
+                <div class="ttext">@Иван перфектно. Title-а е качен. Контейнер MSKU-7234561.</div>
+                <div class="twhen">15:48</div>
+              </div>
+              <div class="tmsg self">
+                <div class="tname">Светослав <span class="trole">собственик</span></div>
+                <div class="ttext">Кажете на клиента, че всичко е тук: <span class="mono">koa.bg/c/x5-9821</span></div>
+                <div class="twhen">сега</div>
+              </div>
+            </div>
+            <div class="tcompose"><i>@</i> спомени &nbsp;·&nbsp; <i>#</i> задача &nbsp;·&nbsp; <i>📎</i> файл</div>
+          </div>
+
+          <div class="ops-section">
+            <div class="ops-label">
+              <span>партньорски услуги · след вноса</span>
+              <span class="count">11 партньора</span>
+            </div>
+            <div class="partners">
+              <div class="partner">
+                <div class="pname">EuroCode BG</div>
+                <div class="psub">Кодиране BMW · Mercedes · Audi · VW</div>
+                <div class="pmeta"><span class="star">★</span> 4.9 · София · ≈ 180 лв</div>
+                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
+              </div>
+              <div class="partner">
+                <div class="pname">TailLight Conversion BG</div>
+                <div class="psub">Стопове за ЕС хомологация · DRL · мъгла</div>
+                <div class="pmeta"><span class="star">★</span> 4.7 · Пловдив · ≈ 340 лв</div>
+                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
+              </div>
+              <div class="partner">
+                <div class="pname">RegistAuto BG</div>
+                <div class="psub">Регистрация · застраховка · диагностика</div>
+                <div class="pmeta"><span class="star">★</span> 4.8 · Бургас · от 90 лв</div>
+                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
+              </div>
+              <div class="partner-more">+ 8 партньора в каталога</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── COMPARE TABLE ───────────────────────────────────────────── -->
   <section class="section wrap" style="padding-top: 64px; padding-bottom: 64px">
     <div class="section-head">
       <div class="section-tag">
-        <span class="num">04</span>
+        <span class="num">05</span>
         Сравнение
       </div>
       <h2 class="display xl">Excel-ът и Viber вече не достигат.</h2>
@@ -1313,6 +1501,8 @@
           <tr><td class="row-label">Документи (Title, BoL, фактури)</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
           <tr><td class="row-label">Авто-публикуване във FB / сайт</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="label-mono">скоро</span></td></tr>
           <tr><td class="row-label">Известия за етап → клиента</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
+          <tr><td class="row-label">Вътрешен чат за екипа</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td class="row-label">Партньорска мрежа за след вноса</td><td class="col-us"><span class="yes">✓</span></td><td><span class="no">—</span></td><td><span class="no">—</span></td></tr>
           <tr><td class="row-label">На български</td><td class="col-us"><span class="yes">✓</span></td><td><span class="yes">✓</span></td><td><span class="no">—</span></td></tr>
         </tbody>
       </table>
