@@ -285,7 +285,7 @@
 
     /* ── Table wrap ────────────────────────────────────────────────────────── */
     .table-wrap {
-      margin: 0 0 8px;
+      margin: 0;
       padding: 0 32px;
     }
     .table-scroll {
@@ -575,12 +575,12 @@
 
     /* ── Footer ────────────────────────────────────────────────────────────── */
     .foot {
-      margin-top: 12px;
+      margin-top: 0;
       background: var(--bg-2);
     }
     .foot-inner {
       max-width: 1280px; margin: 0 auto;
-      padding: 24px 32px;
+      padding: 10px 32px;
       display: flex; justify-content: space-between; align-items: center;
       font-size: 12.5px;
       color: var(--ink-3);
@@ -843,15 +843,13 @@
       .top-nav { display: none; }
       .drawer-stats { grid-template-columns: repeat(2, 1fr); }
       .drawer-stats .stat:nth-child(2) { border-right: 0; }
-      /* Drop sticky columns AND sticky thead rows on phones — the
-         scroll-trap of fixed columns is uncomfortable on small screens,
-         and a sticky header row eats too much of the limited viewport. */
+      /* Drop the horizontally-sticky columns on phones — the scroll-trap
+         is uncomfortable on small screens. Sticky thead rows stay so the
+         column labels remain visible while scrolling vertically. */
       .sticky-col,
       .endcell,
       .head-end,
-      .ghead-end,
-      .headrow .head,
-      .grouprow .ghead { position: static; }
+      .ghead-end { position: static; }
       .table-scroll.with-shadow .sticky-col::after,
       .table-scroll.with-shadow .endcell::before,
       .table-scroll.with-shadow .head-end::before,
