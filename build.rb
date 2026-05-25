@@ -228,7 +228,13 @@ module Build
         'alternateName' => 'kolaotamerika',
         'description' => 'Независим каталог на български фирми, които внасят автомобили от САЩ, Канада, Южна Корея, Япония и Европа.',
         'inLanguage' => 'bg-BG',
-        'publisher' => { '@type' => 'Organization', 'name' => 'колаотамерика', 'url' => SITE_URL }
+        'image' => "#{SITE_URL}og-image.png",
+        'publisher' => {
+          '@type' => 'Organization',
+          'name' => 'колаотамерика',
+          'url' => SITE_URL,
+          'logo' => "#{SITE_URL}og-image.png"
+        }
       },
       {
         '@type' => 'ItemList',
