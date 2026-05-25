@@ -100,7 +100,6 @@
       isNew: c.isNew === true,
       values: {
         registered,
-        verified: c.verified ? { value: "Потвърдено от каталога" } : false,
         source_usa: sourceCell("USA"),
         source_ca:  sourceCell("CA"),
         source_eu:  sourceCell("EU"),

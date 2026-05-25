@@ -121,14 +121,7 @@ module Build
   end
 
   NOSCRIPT_UL_RE = %r{
-    (<div\ class="seo-static">\s*<h1>.*?</h1>\s*<p>.*?</p>\s*<ul>) # opening (captured)
-    .*?                                                            # body (replaced)
-    (</ul>)                                                        # closing (captured)
-  }mx
-
-  # Lax fallback for fixtures/test HTML that has no <p> tag between <h1> and <ul>.
-  NOSCRIPT_UL_LAX_RE = %r{
-    (<div\ class="seo-static">.*?<ul>) # opening (captured)
+    (<div\ class="seo-static">.*?<ul>) # opening: any seo-static block up to its first <ul> (captured)
     .*?                                 # body (replaced)
     (</ul>)                             # closing (captured)
   }mx
@@ -138,12 +131,10 @@ module Build
             .reject { |c| c[:hideFromList] }
             .map { |c| noscript_item(c) }
             .join("\n        ")
-
-    re = html.match?(NOSCRIPT_UL_RE) ? NOSCRIPT_UL_RE : NOSCRIPT_UL_LAX_RE
-    unless html.match?(re)
+    unless html.match?(NOSCRIPT_UL_RE)
       raise MissingMarkerError, 'Could not find <div class="seo-static"> ... <ul> ... </ul>'
     end
-    html.sub(re) { "#{Regexp.last_match(1)}\n        #{items}\n      #{Regexp.last_match(2)}" }
+    html.sub(NOSCRIPT_UL_RE) { "#{Regexp.last_match(1)}\n        #{items}\n      #{Regexp.last_match(2)}" }
   end
 
   def self.noscript_item(company)
