@@ -922,6 +922,64 @@
       .final { padding: 64px 0; }
       .nav { gap: 14px; }
       .nav a:not(.btn) { display: none; }
+
+      /* Form inputs default to ~180px width (size=20) which forces grid
+         tracks wider than their parent — chain-overflows .ad-form, .mock,
+         .feature-2col, and the whole page. min-width:0 lets grid items
+         shrink to fit. Apply same to img-grid cells (aspect-ratio +
+         intrinsic min-content was causing the same chain overflow). */
+      .form-row, .form-row input, .form-row select, .form-row textarea { min-width: 0; }
+      .form-row input, .form-row select, .form-row textarea { width: 100%; }
+      .img-cell { min-width: 0; }
+
+      /* Ad-side preview: ad-price ("44 500 – 48 900") was 30px and
+         overflowed at narrow widths. */
+      .ad-price { font-size: 24px; }
+
+      /* car-head thumb was a fixed 200px column; on narrow screens it
+         dominated the layout. Let it shrink. */
+      .car-head { gap: 16px; }
+      .car-thumb { max-width: 220px; }
+
+      /* Partner cards: button was crammed against the right edge.
+         Stack name/sub/meta and let the button breathe. */
+      .partner { grid-template-columns: 1fr; }
+      .partner .btn { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 8px; }
+    }
+
+    /* Very narrow viewports — phones in portrait. */
+    @media (max-width: 540px) {
+      .wrap, .wrap-narrow { padding: 0 20px; }
+      .hero { padding: 48px 20px 20px; }
+      .section { padding: 56px 20px; }
+      .problem { padding: 40px 20px; }
+      .faq { padding: 40px 20px; }
+
+      /* Display headings: clamp floors of 48/38/30/24 px from the
+         desktop scale are too aggressive when the viewport itself is
+         ~390px wide — words wrap mid-letter or overflow. */
+      .display.xxl { font-size: clamp(32px, 9vw, 48px); }
+      .display.xl  { font-size: clamp(26px, 7.5vw, 38px); }
+      .display.lg  { font-size: clamp(22px, 6.5vw, 32px); }
+      .display.md  { font-size: clamp(20px, 5.5vw, 26px); }
+
+      /* Drop the image grid from 3 → 2 cols on phones; aspect-ratio
+         cells get too narrow at 3 cols and labels become unreadable. */
+      .img-grid { grid-template-columns: repeat(2, 1fr); }
+
+      /* form-grid-3 is already 2 cols at 960px; let the model field
+         take a full row of its own since "Copart · Newark, NJ" is wide. */
+      .form-grid-3 { grid-template-columns: 1fr; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+
+      /* Section heads: the "section-tag" + h2 stack vertically now,
+         shrink the gap. */
+      .section-head { padding-bottom: 32px; gap: 18px; }
+
+      /* The two FAQ summary lines need a slightly smaller display
+         font so they don't wrap awkwardly. */
+      .faq-item summary { font-size: 18px; }
+      .faq-item .plus { font-size: 18px; }
     }
   </style>
 </head>
