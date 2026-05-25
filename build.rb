@@ -181,6 +181,37 @@ module Build
     (</script>)                                                  # closing (captured)
   }mx
 
+  APP_BUNDLE_RE = %r{
+    (<script\ id="app-bundle">)
+    .*?
+    (</script>)
+  }mx
+
+  # Compile app.jsx via esbuild (npx) into plain JS using
+  # React.createElement. Output is the script body that goes inside the
+  # <script id="app-bundle"> tag in index.html.
+  def self.compile_app(jsx_path: 'app.jsx')
+    return nil unless File.exist?(jsx_path)
+    cmd = [
+      'npx', '--yes', 'esbuild',
+      '--loader:.jsx=jsx',
+      '--jsx-factory=React.createElement',
+      '--jsx-fragment=React.Fragment',
+      '--target=es2020',
+      '--charset=utf8',
+      '--minify-syntax',
+      jsx_path
+    ]
+    out = IO.popen([*cmd, err: [:child, :out]], &:read)
+    raise "esbuild failed:\n#{out}" unless $?.success?
+    out
+  end
+
+  def self.splice_app_bundle(html, body)
+    return html unless html.match?(APP_BUNDLE_RE)
+    html.sub(APP_BUNDLE_RE) { "#{Regexp.last_match(1)}\n#{body}\n  #{Regexp.last_match(2)}" }
+  end
+
   SITE_URL = 'https://kolaotamerika.com/'
 
   # Schema.org @graph with two top-level nodes anchored to the live domain:
@@ -261,11 +292,13 @@ module Build
     companies = rows.map { |r| row_to_company(r) }
     json_body = render_json_array(companies)
     jsonld    = render_jsonld(companies)
+    bundle    = compile_app
 
     html = File.read(html_path)
     html = splice_json_block(html, json_body)
     html = splice_noscript(html, companies)
     html = splice_jsonld(html, jsonld)
+    html = splice_app_bundle(html, bundle) if bundle
     File.write(html_path, html)
     companies.length
   end

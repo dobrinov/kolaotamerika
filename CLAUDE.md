@@ -19,8 +19,8 @@ directly with `file://` works.
   to add/change companies. Spreadsheet apps (LibreOffice/Numbers in EU
   locale) re-save with `;` as the delimiter; `build.rb` auto-detects `,` or
   `;` so either is fine.
-- **`build.rb`** — reads `companies.csv` and rewrites three regions inside
-  `index.html`:
+- **`build.rb`** — reads `companies.csv`, compiles `app.jsx`, and rewrites
+  four regions inside `index.html`:
   1. The `<script type="application/json" id="company-data">` JSON block
      the React app consumes.
   2. The `<ul>` inside `<div class="seo-static">` (the `<noscript>` SEO
@@ -29,7 +29,14 @@ directly with `file://` works.
   3. The `<script type="application/ld+json" id="catalog-jsonld">` block
      in the head — schema.org `ItemList` of `AutoDealer` organizations for
      each non-hidden row (used by search engines).
+  4. The `<script id="app-bundle">` block at the bottom of the body — the
+     compiled output of `app.jsx`. Compilation runs `npx esbuild` with
+     `--loader:.jsx=jsx --jsx-factory=React.createElement
+     --jsx-fragment=React.Fragment` so the browser gets plain JS (no
+     in-browser Babel).
   Everything else in `index.html` is left byte-for-byte intact.
+- **`app.jsx`** — the React source. Edit this to change the UI; running
+  `ruby build.rb` recompiles it into `index.html`.
 - **`index.html`** — head, styles, the React/Babel app, and the two
   regenerated regions. Open it in any modern browser to view the catalog.
 
@@ -43,8 +50,10 @@ ruby build.rb
 ruby -c build.rb
 ```
 
-Ruby ≥ 3.0 is sufficient (uses only stdlib `csv`, `json`, `cgi`). No
-dependencies, no Gemfile.
+Ruby ≥ 3.0 is sufficient (uses only stdlib `csv`, `json`, `cgi`). Node /
+`npx` must be on PATH so `build.rb` can shell out to `npx --yes esbuild`
+when the React app needs to be recompiled. esbuild is fetched on first
+run and cached by npx after that. No Gemfile, no package.json.
 
 ## CSV schema (36 columns)
 
@@ -123,9 +132,10 @@ it shows `Brand (Legal)` when `legal` is a real registered name, or just
    you accidentally hand-edited the HTML.
 
 Never hand-edit the JSON inside `<script id="company-data">`, the `<ul>`
-inside `<div class="seo-static">`, or the JSON inside
-`<script id="catalog-jsonld">` — those are generated artifacts that
-`build.rb` will overwrite.
+inside `<div class="seo-static">`, the JSON inside
+`<script id="catalog-jsonld">`, or the JS inside
+`<script id="app-bundle">` — those are generated artifacts that
+`build.rb` will overwrite. To change the UI, edit `app.jsx`.
 
 ## CSS / layout gotchas
 
