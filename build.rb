@@ -181,13 +181,20 @@ module Build
     (</script>)                                                  # closing (captured)
   }mx
 
-  # Schema.org ItemList of AutoDealer organizations — one entry per visible
-  # (non-hidden) company. Helps search engines understand the page as a
-  # structured catalog of businesses rather than a generic article.
+  SITE_URL = 'https://kolaotamerika.com/'
+
+  # Schema.org @graph with two top-level nodes anchored to the live domain:
+  #
+  #   - WebSite (the catalog itself; helps Google index the site name and
+  #     pick up potentialAction / inLanguage)
+  #   - ItemList of AutoDealer organizations (one node per visible, non-hidden
+  #     row). Each org carries name, legalName, identifier (ЕИК),
+  #     foundingDate, url, telephone, email, PostalAddress and sameAs.
   def self.render_jsonld(companies)
     visible = companies.reject { |c| c[:hideFromList] }
     items = visible.each_with_index.map do |c, i|
       org = { '@type' => 'AutoDealer', 'name' => c[:brand] }
+      org['@id']          = "#{SITE_URL}##{c[:id]}"
       org['legalName']    = c[:legal]   if real_legal_name?(c[:legal].to_s)
       org['identifier']   = c[:eik]     if c[:eik]
       org['foundingDate'] = c[:founded] if c[:founded]
@@ -212,15 +219,30 @@ module Build
       { '@type' => 'ListItem', 'position' => i + 1, 'item' => org }
     end
 
-    payload = {
-      '@context' => 'https://schema.org',
-      '@type' => 'ItemList',
-      'name' => 'Каталог на вносители на коли в България',
-      'description' => 'Независим каталог на български фирми, които внасят автомобили от САЩ, Канада, Южна Корея, Япония и Европа.',
-      'numberOfItems' => visible.length,
-      'itemListElement' => items
-    }
-    JSON.pretty_generate(payload)
+    graph = [
+      {
+        '@type' => 'WebSite',
+        '@id' => "#{SITE_URL}#site",
+        'url' => SITE_URL,
+        'name' => 'колаотамерика',
+        'alternateName' => 'kolaotamerika',
+        'description' => 'Независим каталог на български фирми, които внасят автомобили от САЩ, Канада, Южна Корея, Япония и Европа.',
+        'inLanguage' => 'bg-BG',
+        'publisher' => { '@type' => 'Organization', 'name' => 'колаотамерика', 'url' => SITE_URL }
+      },
+      {
+        '@type' => 'ItemList',
+        '@id' => "#{SITE_URL}#catalog",
+        'url' => SITE_URL,
+        'mainEntityOfPage' => SITE_URL,
+        'name' => 'Каталог на вносители на коли в България',
+        'description' => 'Сравнителен каталог: регистрирана фирма (ЕИК), уебсайт, телефон, имейл, Viber, аукциони, държави на внос.',
+        'numberOfItems' => visible.length,
+        'itemListElement' => items
+      }
+    ]
+
+    JSON.pretty_generate({ '@context' => 'https://schema.org', '@graph' => graph })
   end
 
   def self.splice_jsonld(html, body)
