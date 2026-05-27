@@ -188,7 +188,7 @@
     const reportSection = `<section class="drawer-section drawer-report">
       <h3 class="drawer-h3">Подай поправка</h3>
       <p class="drawer-report-lead">Видяхте грешка или липсваща информация? Изпратете я и ще обновим записа.</p>
-      <a class="po-link" href="mailto:update@kolaotamerika.com?subject=${reportSubject}&body=${reportBody}">Изпрати имейл до update@kolaotamerika.com ${ICONS.ext}</a>
+      <a class="po-link" href="mailto:contact@kolaotamerika.com?subject=${reportSubject}&body=${reportBody}">Изпрати имейл до contact@kolaotamerika.com ${ICONS.ext}</a>
     </section>`;
 
     const scrim = document.createElement("div");
