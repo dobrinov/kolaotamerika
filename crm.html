@@ -792,13 +792,41 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 8px 12px;
       font-family: var(--mono);
       font-size: 12px;
       letter-spacing: 0.06em;
     }
     .share-link .share-key { color: var(--ink-3); }
-    .share-link .share-url { color: var(--ink); }
+    .share-link .share-url { color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+
+    /* ── proof / past deliveries grid ──────────────────────────────── */
+    .proof-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .proof-card {
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--paper-2);
+    }
+    .proof-card .pthumb {
+      aspect-ratio: 16 / 10;
+      background: repeating-linear-gradient(135deg, var(--bg-3) 0 6px, var(--bg-2) 6px 12px);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .proof-card .pbody { padding: 10px 12px; display: grid; gap: 4px; }
+    .proof-card .pmodel { font-weight: 600; font-size: 13px; }
+    .proof-card .proute {
+      font-family: var(--mono);
+      font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .proof-card .badge { margin-top: 4px; justify-self: start; }
 
     /* ── final cta ─────────────────────────────────────────────────── */
     .final { padding: 88px 0; border-top: 1px solid var(--rule); background: var(--bg-2); }
@@ -1008,116 +1036,124 @@
     <div class="eyebrow">CRM за вносители на коли</div>
     <h1 class="display xxl">Спрете да отговаряте на 100 обаждания на ден.</h1>
     <p class="lede">
-      колаотамерика/crm е операционната система за фирми, които внасят коли от
-      <strong style="color: var(--ink)">САЩ, Канада, Европа, Япония и Корея</strong>.
-      Една обява, един чат, един линк за клиента — от наддаването до връчването на ключовете.
+      Една система за фирмите, които внасят коли:
+      <strong style="color: var(--ink)">проследяване, обяви и доверие</strong> — на едно място.
     </p>
     <div class="hero-ctas">
       <a href="#contact" class="btn btn-primary">Заяви демо →</a>
       <a href="#features" class="btn btn-ghost">Виж как работи</a>
     </div>
     <div class="hero-meta">
-      <span><span class="tick">✓</span>Чат с клиента — без приложение, без логин</span>
-      <span><span class="tick">✓</span>Обявите автоматично на сайт + Facebook</span>
-      <span><span class="tick">✓</span>Тракинг страница за всяка кола</span>
+      <span><span class="tick">✓</span>Клиентът сам следи колата си — спира да звъни</span>
+      <span><span class="tick">✓</span>Обявите — на сайт + автоматично във Facebook</span>
+      <span><span class="tick">✓</span>Минали доставки, които печелят доверие</span>
     </div>
   </section>
 
-  <!-- ── PROBLEM ─────────────────────────────────────────────────── -->
-  <section class="problem wrap" id="problem">
-    <div class="problem-head">
+  <!-- ── WHAT IS A CRM ────────────────────────────────────────────── -->
+  <section class="section wrap" id="what" style="padding-top: 56px; padding-bottom: 56px">
+    <div class="problem-head" style="padding-bottom: 0">
       <div>
-        <div class="eyebrow bare" style="color: var(--warn)">— 01 / Проблемът</div>
-        <h2 class="display lg" style="margin-top: 14px">Внасяте коли. Хабите време в отговаряне.</h2>
+        <div class="eyebrow bare" style="color: var(--warn)">— Какво е CRM?</div>
+        <h2 class="display lg" style="margin-top: 14px">Едно място за цялата работа.</h2>
       </div>
       <p class="lede">
-        Всеки клиент пише по Viber, обажда се вечер, пита същия въпрос за трети път.
-        Информация за колата е разпиляна в 6 чата, 2 имейла и един WhatsApp. Звучи познато?
+        Вместо обяви в тетрадка, клиенти по Viber и документи из имейла — една програма, в която водите всичко на едно място: кой клиент коя кола чака, докъде е стигнала доставката и къде са документите. Точно това е колаотамерика/crm — направена за вносители на коли.
       </p>
-    </div>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <div class="problem-num">01</div>
-        <h3 class="problem-title">„Кога пристига контейнерът?“</h3>
-        <p>Един и същи въпрос от 12 клиента, всеки ден. Никой не може да види сам докъде е стигнала колата му.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-num">02</div>
-        <h3 class="problem-title">Снимки в 5 различни чата</h3>
-        <p>Изпращате едни и същи снимки на Viber, после на Messenger, после на имейл. Качеството пада, оригиналите се губят.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-num">03</div>
-        <h3 class="problem-title">Документи на парчета</h3>
-        <p>Title, Bill of Lading, фактура от аукциона, договор — всеки документ е на различно място. Клиентът ги иска веднага.</p>
-      </div>
     </div>
   </section>
 
-  <!-- ── INBOX FEATURE ───────────────────────────────────────────── -->
+  <!-- ── PILLAR 1: TRACKING + CHAT + DOCS ─────────────────────────── -->
   <section class="section wrap" id="features">
     <div class="section-head">
       <div class="section-tag">
         <span class="num">01</span>
-        Чат с клиента
+        Проследяване · чат · документи
       </div>
       <h2 class="display xl">
-        Един чат за всеки клиент.
-        <span style="color: var(--ink-3)">Без 50 Viber групи.</span>
+        Един линк за клиента.
+        <span style="color: var(--ink-3)">Вижда къде е колата — и спира да звъни.</span>
       </h2>
     </div>
 
     <div class="feature-2col">
       <div class="feat-copy">
         <p class="lede">
-          Клиентът чати с вас директно през тракинг страницата на колата си. Без приложение, без логин, без 5 различни апликации. Вие виждате всички разговори събрани на едно място, привързани към конкретна кола.
+          Всяка кола има своя страница. Клиентът вижда докъде е стигнала, всичките документи, и пише директно на вас — без логин, без приложение.
         </p>
         <ul class="feat-list">
-          <li>
-            <span class="k">01</span>
-            <div>
-              <strong>Чат, привързан към колата</strong>
-              <div class="desc">Всеки разговор е към конкретен автомобил — снимки, въпроси, цени, всичко на място.</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">02</span>
-            <div>
-              <strong>Авто-отговори за чести въпроси</strong>
-              <div class="desc">„Кога пристига?“, „Какъв е статусът?“ — линк към тракинг страницата с 1 клик.</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">03</span>
-            <div>
-              <strong>Цялата история на клиента</strong>
-              <div class="desc">Кои коли е питал, колко е платил, какво е обещано — никога не питайте два пъти.</div>
-            </div>
-          </li>
+          <li><span class="k">→</span><div><strong>Жив статус — от аукциона до Бургас</strong><div class="desc">Клиентът сам проверява. Вие не вдигате телефона по 20 пъти.</div></div></li>
+          <li><span class="k">→</span><div><strong>Вграден чат за всяка кола</strong><div class="desc">Всички съобщения на едно място, привързани към автомобила.</div></div></li>
+          <li><span class="k">→</span><div><strong>Всички документи на едно място</strong><div class="desc">Title, фактури, договори, митница, документи на колата — в PDF.</div></div></li>
         </ul>
+
+        <div class="share-link">
+          <span class="share-key">линк за клиента:</span>
+          <span class="share-url">kolaotamerika.com/c/8f3b2a1c-4d5e-4a6b-9c0d-1e2f3a4b5c6d</span>
+          <button class="btn btn-ghost btn-xs" data-copy-share="kolaotamerika.com/c/8f3b2a1c-4d5e-4a6b-9c0d-1e2f3a4b5c6d" type="button">Копирай</button>
+        </div>
       </div>
 
       <div class="mock">
         <div class="mock-bar">
-          <span>входяща · 5 чата · уеб</span>
+          <span>клиентски изглед · kolaotamerika.com/c/8f3b2a1c-4d5e-4a6b-9c0d-1e2f3a4b5c6d</span>
           <span class="dots"><i></i><i></i><i></i></span>
         </div>
-        <div class="inbox">
-          <div class="inbox-list" id="inbox-list"></div>
-          <div class="inbox-thread">
-            <div class="thread-head">
-              <div>
-                <h4 id="thread-name"></h4>
-                <div class="label-mono" style="margin-top: 4px">За: <span id="thread-car"></span></div>
+
+        <div class="tracker">
+          <div class="car-head">
+            <div class="car-thumb">фото 3/4</div>
+            <div class="car-meta">
+              <h4>2021 BMW X5 xDrive40i</h4>
+              <div class="badges">
+                <span class="badge green">пали и се движи</span>
+                <span class="badge">2 ключа</span>
+                <span class="badge">Copart NJ</span>
               </div>
-              <span class="btn btn-ghost btn-xs">Виж картон →</span>
             </div>
-            <div class="msg-list" id="thread-msgs"></div>
-            <form class="composer" onsubmit="event.preventDefault(); this.querySelector('input').value='';">
-              <input placeholder="Отговор към клиента…" />
-              <button type="submit" class="btn btn-primary btn-sm">Изпрати</button>
-            </form>
+            <div class="car-right">
+              <div class="price">23 800 €</div>
+              <div class="price-note">всичко включено</div>
+            </div>
           </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px">
+            <div class="label-mono" id="step-counter">статус · стъпка 5 от 8</div>
+            <div style="display: flex; gap: 8px">
+              <button class="btn btn-ghost btn-xs" data-step="prev" type="button">← назад</button>
+              <button class="btn btn-primary btn-xs" data-step="next" type="button">напред →</button>
+            </div>
+          </div>
+
+          <div class="timeline" id="timeline"></div>
+
+          <div class="doc-strip">
+            <div class="doc">
+              <div class="dtype">PDF · Title</div>
+              <div class="dname">title-5UXCR6C5X.pdf</div>
+              <div class="dsize">412 KB</div>
+            </div>
+            <div class="doc">
+              <div class="dtype">PDF · Фактура</div>
+              <div class="dname">copart-78329114.pdf</div>
+              <div class="dsize">96 KB</div>
+            </div>
+            <div class="doc">
+              <div class="dtype">PDF · Договор</div>
+              <div class="dname">dogovor-x5.pdf</div>
+              <div class="dsize">120 KB</div>
+            </div>
+            <div class="doc placeholder">+ митница (очаква се)</div>
+          </div>
+
+          <div class="msg-list" style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule)">
+            <div class="msg in">Кога пристига колата?<div class="meta">клиент · сега</div></div>
+            <div class="msg out">Виждате го на живо горе — ETA Бургас 28.06.<div class="meta">вие</div></div>
+          </div>
+          <form class="composer" onsubmit="event.preventDefault(); this.querySelector('input').value='';">
+            <input placeholder="Напишете съобщение…" />
+            <button type="submit" class="btn btn-primary btn-sm">Изпрати</button>
+          </form>
         </div>
       </div>
     </div>
@@ -1128,48 +1164,23 @@
     <div class="section-head">
       <div class="section-tag">
         <span class="num">02</span>
-        Публикуване на обяви
+        Обяви → kolaotamerika.com + Facebook
       </div>
       <h2 class="display xl">
-        Обявата, която клиентът чака.
-        <span style="color: var(--ink-3)">Без 6 имейла назад-напред.</span>
+        Качи веднъж.
+        <span style="color: var(--ink-3)">Публикува се в kolaotamerika.com и във Facebook.</span>
       </h2>
     </div>
 
     <div class="feature-2col reverse">
       <div class="feat-copy">
         <p class="lede">
-          Един общ формуляр за всички детайли: щета, ключове, продавач, аукцион или директна покупка, цена или диапазон, срок за доставка, локация. Веднъж попълнено — обявата става достъпна на вашия сайт и автоматично се публикува във Facebook страницата ви.
+          Попълвате обявата веднъж. Тя става публична в каталога на <strong style="color: var(--ink)">kolaotamerika.com</strong>, където клиентите търсят коли — и автоматично се пуска във вашата Facebook страница.
         </p>
         <ul class="feat-list">
-          <li>
-            <span class="k">→</span>
-            <div>
-              <strong>Стандартни полета за CARFAX-стил данни</strong>
-              <div class="desc">Година, пробег, двигател, ключове, статус „пали ли“ — клиентът вижда всичко без да пита.</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">→</span>
-            <div>
-              <strong>Автоматичен пост във Facebook</strong>
-              <div class="desc">Една публикация — обявата веднага се появява на сайта ви и във Facebook страницата ви.</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">→</span>
-            <div>
-              <strong>Аукцион или директна покупка</strong>
-              <div class="desc">Превключете режима — формулярът показва само релевантните полета (краен срок, текуща оферта или фиксирана цена).</div>
-            </div>
-          </li>
-          <li>
-            <span class="k">→</span>
-            <div>
-              <strong>До 40 снимки + видео обиколка</strong>
-              <div class="desc">Оригинално качество, автоматично сортиране (екстериор, интериор, щети, табло, рама).</div>
-            </div>
-          </li>
+          <li><span class="k">→</span><div><strong>Публична в kolaotamerika.com</strong><div class="desc">Обявата влиза в каталога, който клиентите разглеждат — не само на ваша страница.</div></div></li>
+          <li><span class="k">→</span><div><strong>Автоматичен пост във Facebook</strong><div class="desc">Едно качване — обявата е и във вашата Facebook страница.</div></div></li>
+          <li><span class="k">→</span><div><strong>Готови полета + до 40 снимки</strong><div class="desc">Година, пробег, ключове, щета, цена — клиентът вижда всичко без да пита.</div></div></li>
         </ul>
       </div>
 
@@ -1184,11 +1195,7 @@
             <div class="img-grid">
               <div class="img-cell lead">фасада 3/4</div>
               <div class="img-cell">интериор</div>
-              <div class="img-cell">табло</div>
               <div class="img-cell">щета</div>
-              <div class="img-cell">мотор</div>
-              <div class="img-cell">рама</div>
-              <div class="img-cell">VIN</div>
               <div class="img-cell add">
                 <span class="plus">+</span>
                 <span>добави</span>
@@ -1208,26 +1215,9 @@
               <div class="form-row"><label>Модел</label><input value="X5 xDrive40i" /></div>
             </div>
 
-            <div class="form-grid-2">
-              <div class="form-row"><label>Пробег (мили)</label><input value="48 320" /></div>
-              <div class="form-row"><label>Двигател</label><input value="3.0L I6 Turbo · бензин · 335 к.с." /></div>
-            </div>
-
-            <div class="form-grid-3">
-              <div class="form-row">
-                <label>Ключове</label>
-                <select><option>1</option><option selected>2</option><option>Без ключ</option></select>
-              </div>
-              <div class="form-row"><label>Срок за доставка</label><input value="4–6 седмици" /></div>
-              <div class="form-row">
-                <label data-seller-label>Аукцион / лот</label>
-                <input value="Copart · Newark, NJ" />
-              </div>
-            </div>
-
             <div class="form-row">
-              <label>Локация → крайна точка</label>
-              <input value="Newark, NJ → Бургас" />
+              <label data-seller-label>Аукцион / лот</label>
+              <input value="Copart · Newark, NJ" />
             </div>
 
             <div class="ad-toggles-box">
@@ -1255,12 +1245,12 @@
             </div>
 
             <div class="form-grid-2" id="price-range-fields" style="margin-top: 16px">
-              <div class="form-row"><label>Цена от (лв)</label><input value="44 500" /></div>
-              <div class="form-row"><label>Цена до (лв)</label><input value="48 900" /></div>
+              <div class="form-row"><label>Цена от (€)</label><input value="22 750" /></div>
+              <div class="form-row"><label>Цена до (€)</label><input value="25 000" /></div>
             </div>
             <div class="form-row" id="price-single-field" style="margin-top: 16px; display: none">
-              <label>Цена (лв)</label>
-              <input value="44 500" />
+              <label>Цена (€)</label>
+              <input value="22 750" />
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap">
@@ -1290,224 +1280,87 @@
             <hr class="rule" style="margin: 18px 0" />
 
             <div class="label-mono">цена</div>
-            <div class="ad-price" id="ad-price">44 500 – 48 900 <span class="cur">лв</span></div>
-            <div class="label-mono" style="margin-top: 4px">≈ 22 821 €</div>
+            <div class="ad-price" id="ad-price">22 750 – 25 000 <span class="cur">€</span></div>
           </aside>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── CLIENT TRACKING FEATURE ─────────────────────────────────── -->
-  <section class="section wrap" id="tracking">
+  <!-- ── PILLAR 3: TRUST VIA PAST DELIVERIES ──────────────────────── -->
+  <section class="section wrap" id="trust">
     <div class="section-head">
       <div class="section-tag">
         <span class="num">03</span>
-        Тракинг страница
+        Доверие
       </div>
       <h2 class="display xl">
-        Страница за всяка кола.
-        <span style="color: var(--ink-3)">Отговаря на въпроса „къде е?“ без вас.</span>
+        Покажете доставките си.
+        <span style="color: var(--ink-3)">Новият клиент спира да се пита дали е измама.</span>
       </h2>
     </div>
 
     <div class="feature-2col">
       <div class="feat-copy">
         <p class="lede">
-          Всяка кола има своя тракинг страница. Клиентът отваря линка и вижда къде е колата в момента, кога ще пристигне, всичките си документи, и чати с вас директно — без логин, без приложение.
+          Всяка доставена кола влиза в публичната ви витрина — снимки, маршрут и дати. Реални доставки, които нов клиент вижда, преди да ви се довери.
         </p>
         <ul class="feat-list">
-          <li><span class="k">→</span><div><strong>Live статус от аукциона до Бургас</strong><div class="desc">8 етапа, всеки със снимка, дата, GPS позиция и партньор-превозвач.</div></div></li>
-          <li><span class="k">→</span><div><strong>Документи на едно място</strong><div class="desc">Title, Bill of Lading, фактура от аукцион, договор, митница, регистрация — всичко в PDF.</div></div></li>
-          <li><span class="k">→</span><div><strong>Автоматични известия</strong><div class="desc">Имейл или push при всяка промяна на статуса. Клиентът спира да ви звъни.</div></div></li>
-          <li><span class="k">→</span><div><strong>По-късно: контейнер ID + митница</strong><div class="desc">Веднъж добавен номер на контейнер, проследяването е реално, в реално време.</div></div></li>
+          <li><span class="k">→</span><div><strong>Публична витрина с минали доставки</strong><div class="desc">Доказва, че сте докарвали коли — не само обещавате.</div></div></li>
+          <li><span class="k">→</span><div><strong>Реални снимки, маршрут и дати</strong><div class="desc">Не отзиви на думи — същинските сделки, които сте направили.</div></div></li>
+          <li><span class="k">→</span><div><strong>Един линк, който печели доверие</strong><div class="desc">Споделяте го с колебаещ се клиент — и сделката тръгва.</div></div></li>
         </ul>
 
         <div class="share-link">
-          <span class="share-key">тракинг линк:</span>
-          <span class="share-url">koa.bg/c/x5-9821</span>
-          <button class="btn btn-ghost btn-xs" data-copy-share="koa.bg/c/x5-9821" type="button">Копирай</button>
+          <span class="share-key">публичен профил:</span>
+          <span class="share-url">kolaotamerika.com/dealer/вашата-фирма</span>
+          <button class="btn btn-ghost btn-xs" data-copy-share="kolaotamerika.com/dealer/вашата-фирма" type="button">Копирай</button>
         </div>
       </div>
 
       <div class="mock">
         <div class="mock-bar">
-          <span>клиентски изглед · koa.bg/c/x5-9821</span>
+          <span>публичен профил · 142 доставени · от 2019</span>
           <span class="dots"><i></i><i></i><i></i></span>
         </div>
-
-        <div class="tracker">
-          <div class="car-head">
-            <div class="car-thumb">фото 3/4</div>
-            <div class="car-meta">
-              <h4>2021 BMW X5 xDrive40i</h4>
-              <div class="vin">VIN · 5UXCR6C5XKLL12345</div>
-              <div class="badges">
-                <span class="badge green">пали и се движи</span>
-                <span class="badge amber">фронтална щета · лека</span>
-                <span class="badge">2 ключа</span>
-                <span class="badge">Copart NJ</span>
+        <div style="padding: 18px">
+          <div class="proof-grid">
+            <div class="proof-card">
+              <div class="pthumb">фото · доставена</div>
+              <div class="pbody">
+                <div class="pmodel">2020 Audi Q5</div>
+                <div class="proute">Newark → София</div>
+                <span class="badge green">доставена · 03.2026</span>
               </div>
             </div>
-            <div class="car-right">
-              <div class="price">46 500 лв</div>
-              <div class="price-note">всичко включено</div>
+            <div class="proof-card">
+              <div class="pthumb">фото · доставена</div>
+              <div class="pbody">
+                <div class="pmodel">2019 Ford F-150</div>
+                <div class="proute">Toronto → Бургас</div>
+                <span class="badge green">доставена · 02.2026</span>
+              </div>
+            </div>
+            <div class="proof-card">
+              <div class="pthumb">фото · доставена</div>
+              <div class="pbody">
+                <div class="pmodel">2021 Tesla Model 3</div>
+                <div class="proute">LA → Пловдив</div>
+                <span class="badge green">доставена · 01.2026</span>
+              </div>
+            </div>
+            <div class="proof-card">
+              <div class="pthumb">фото · доставена</div>
+              <div class="pbody">
+                <div class="pmodel">2018 BMW M4</div>
+                <div class="proute">Antwerp → Варна</div>
+                <span class="badge green">доставена · 12.2025</span>
+              </div>
             </div>
           </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px">
-            <div class="label-mono" id="step-counter">статус · стъпка 5 от 8</div>
-            <div style="display: flex; gap: 8px">
-              <button class="btn btn-ghost btn-xs" data-step="prev" type="button">← назад</button>
-              <button class="btn btn-primary btn-xs" data-step="next" type="button">напред →</button>
-            </div>
-          </div>
-
-          <div class="timeline" id="timeline"></div>
-
-          <div class="doc-strip">
-            <div class="doc">
-              <div class="dtype">PDF · Title</div>
-              <div class="dname">title-5UXCR6C5X.pdf</div>
-              <div class="dsize">412 KB</div>
-            </div>
-            <div class="doc">
-              <div class="dtype">PDF · BoL</div>
-              <div class="dname">msc-bridge-bol.pdf</div>
-              <div class="dsize">228 KB</div>
-            </div>
-            <div class="doc">
-              <div class="dtype">PDF · Аукцион</div>
-              <div class="dname">copart-78329114.pdf</div>
-              <div class="dsize">96 KB</div>
-            </div>
-            <div class="doc placeholder">+ митница (очаква се)</div>
-          </div>
+          <div class="partner-more" style="margin-top: 14px">+ виж всички 142 доставени коли</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ── OPS FEATURE (team chat + partner marketplace) ───────────── -->
-  <section class="section wrap" id="ops">
-    <div class="section-head">
-      <div class="section-tag">
-        <span class="num">04</span>
-        Екип + партньори
-      </div>
-      <h2 class="display xl">
-        Не сте сами в това.
-        <span style="color: var(--ink-3)">Екипът и партньорите ви — на едно място.</span>
-      </h2>
-    </div>
-
-    <div class="feature-2col reverse">
-      <div class="feat-copy">
-        <p class="lede">
-          Вътрешен чат за вас и колегите ви (мениджър, механик, офис) — отделно от клиентския. И каталог с партньорите, които довършват колата след вноса: кодиране за европейския регион, преобразуване на стоповете, регистрация, диагностика.
-        </p>
-        <ul class="feat-list">
-          <li><span class="k">→</span><div><strong>Вътрешен чат — отделно от клиентския</strong><div class="desc">Колегите ви виждат само това, което трябва. Споменавания, файлове, бордове по проект.</div></div></li>
-          <li><span class="k">→</span><div><strong>Задачи и нотификации</strong><div class="desc">„Качи Title“, „Звънни на Георги в петък“ — без губещи се напомняния по групи.</div></div></li>
-          <li><span class="k">→</span><div><strong>Партньори за след вноса</strong><div class="desc">Кодиране BMW / Mercedes / Audi, преобразуване на стоповете, диагностика — всички с рейтинг и цена.</div></div></li>
-          <li><span class="k">→</span><div><strong>1 клик — реферал към клиента</strong><div class="desc">„X5 е готова — препоръчваме EuroCode BG за европейския навигационен модул.“ Реферал-комисионна по желание.</div></div></li>
-        </ul>
-      </div>
-
-      <div class="mock">
-        <div class="mock-bar">
-          <span>операции · екип + партньори</span>
-          <span class="dots"><i></i><i></i><i></i></span>
-        </div>
-        <div class="ops-mock">
-          <div class="ops-section">
-            <div class="ops-label">
-              <span>екип · 2021 BMW X5 · вътрешен чат</span>
-              <span class="count">4 в проекта</span>
-            </div>
-            <div class="team-msgs">
-              <div class="tmsg">
-                <div class="tname">Иван <span class="trole">механик</span></div>
-                <div class="ttext">X5 е готова за товарене. VIN: <span class="mono">5UXCR6C5XKLL12345</span></div>
-                <div class="twhen">15:42</div>
-              </div>
-              <div class="tmsg">
-                <div class="tname">Мария <span class="trole">офис</span></div>
-                <div class="ttext">@Иван перфектно. Title-а е качен. Контейнер MSKU-7234561.</div>
-                <div class="twhen">15:48</div>
-              </div>
-              <div class="tmsg self">
-                <div class="tname">Светослав <span class="trole">собственик</span></div>
-                <div class="ttext">Кажете на клиента, че всичко е тук: <span class="mono">koa.bg/c/x5-9821</span></div>
-                <div class="twhen">сега</div>
-              </div>
-            </div>
-            <div class="tcompose"><i>@</i> спомени &nbsp;·&nbsp; <i>#</i> задача &nbsp;·&nbsp; <i>📎</i> файл</div>
-          </div>
-
-          <div class="ops-section">
-            <div class="ops-label">
-              <span>партньорски услуги · след вноса</span>
-              <span class="count">11 партньора</span>
-            </div>
-            <div class="partners">
-              <div class="partner">
-                <div class="pname">EuroCode BG</div>
-                <div class="psub">Кодиране BMW · Mercedes · Audi · VW</div>
-                <div class="pmeta"><span class="star">★</span> 4.9 · София · ≈ 180 лв</div>
-                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
-              </div>
-              <div class="partner">
-                <div class="pname">TailLight Conversion BG</div>
-                <div class="psub">Стопове за ЕС хомологация · DRL · мъгла</div>
-                <div class="pmeta"><span class="star">★</span> 4.7 · Пловдив · ≈ 340 лв</div>
-                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
-              </div>
-              <div class="partner">
-                <div class="pname">RegistAuto BG</div>
-                <div class="psub">Регистрация · застраховка · диагностика</div>
-                <div class="pmeta"><span class="star">★</span> 4.8 · Бургас · от 90 лв</div>
-                <button class="btn btn-ghost btn-xs" type="button">Препоръчай →</button>
-              </div>
-              <div class="partner-more">+ 8 партньора в каталога</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FAQ ─────────────────────────────────────────────────────── -->
-  <section class="faq wrap-narrow">
-    <div style="margin-bottom: 32px">
-      <div class="eyebrow bare" style="color: var(--warn)">— Често задавани въпроси</div>
-      <h2 class="display lg" style="margin-top: 14px">Сигурно вече сте се чудили…</h2>
-    </div>
-    <div>
-      <details class="faq-item">
-        <summary>Къде клиентите ми ще ми пишат?<span class="plus">+</span></summary>
-        <div class="answer">Чатът е вграден в тракинг страницата на колата — клиентът отваря линка, който вече сте му дали, и пише там директно. Без логин, без приложение. Вие виждате всички разговори събрани във вашата входяща кутия, привързани към конкретна кола.</div>
-      </details>
-      <details class="faq-item">
-        <summary>Къде ще се показват обявите ми?<span class="plus">+</span></summary>
-        <div class="answer">Веднъж публикувана обява става достъпна на два места: на вашия сайт (под уникален URL — embed или JSON API) и автоматично се пуска като пост във Facebook бизнес страницата ви. Една обява, едно публикуване.</div>
-      </details>
-      <details class="faq-item">
-        <summary>Какво вижда клиентът в линка си?<span class="plus">+</span></summary>
-        <div class="answer">Само неговата кола: снимки, етапи (от аукциона до Бургас), документи (Title, BoL, фактури), и чат с вас. Без логин, без приложение. Може да го сподели с фамилията си.</div>
-      </details>
-      <details class="faq-item">
-        <summary>Може ли да добавяме номер на контейнер и да го проследяваме?<span class="plus">+</span></summary>
-        <div class="answer">Да. Веднъж добавен MSKU / TCLU / друг префикс, системата сама дърпа позицията на кораба от партньорска API услуга и показва ETA в реално време на клиента.</div>
-      </details>
-      <details class="faq-item">
-        <summary>На какъв език е?<span class="plus">+</span></summary>
-        <div class="answer">Изцяло на български. Шаблоните за съобщения и обявите също. Скоро — англоезичен изглед за чужди клиенти и партньори.</div>
-      </details>
-      <details class="faq-item">
-        <summary>Колко струва?<span class="plus">+</span></summary>
-        <div class="answer">Цената зависи от обема (брой коли / месец) и броя потребители. Пишете на contact@kolaotamerika.com или поискайте демо — ще ви върнем оферта в рамките на 24 часа.</div>
-      </details>
     </div>
   </section>
 
@@ -1557,87 +1410,6 @@
         lu.textContent = "последна актуализация: " + today;
       }
 
-      // ── inbox ──────────────────────────────────────────────────────
-      const inbox = [
-        {
-          id: "i1", name: "Георги Петров", when: "сега",
-          snippet: "Може ли още снимки на гумите?",
-          car: "BMW X5 · 2019",
-          messages: [
-            { dir: "in",  text: "Здравейте, видях обявата за X5. Може ли още снимки на гумите?", t: "14:22" },
-            { dir: "out", text: "Здравейте! Изпратих ви линк към пълната галерия — 47 снимки, вкл. ходова и гуми.", t: "14:24" },
-            { dir: "in",  text: "Перфектно. А кога ще е тук?", t: "14:25" },
-            { dir: "out", text: "Контейнерът тръгва от Балтимор на 02.06. ETA Бургас — 28.06. Виждате го live в тракинг страницата.", t: "14:26" }
-          ]
-        },
-        {
-          id: "i2", name: "Дарина Стоилова", when: "12 мин",
-          snippet: "Готова ли е фактурата от аукциона?",
-          car: "Audi Q7",
-          messages: [
-            { dir: "in",  text: "Здравейте, готова ли е фактурата от аукциона за Q7?", t: "13:18" },
-            { dir: "out", text: "Качвам я в тракинг страницата сега — ще ви се появи в раздел „Документи“.", t: "13:30" }
-          ]
-        },
-        {
-          id: "i3", name: "Емил Костов", when: "1 ч",
-          snippet: "Здравейте, видях Mustang-а…",
-          car: "Ford Mustang",
-          messages: [
-            { dir: "in",  text: "Здравейте, видях Mustang-а в обявите. Има ли още такива в наличност?", t: "12:40" }
-          ]
-        },
-        {
-          id: "i4", name: "Илиян Радев", when: "3 ч",
-          snippet: "Container number?",
-          car: "Tesla Model Y",
-          messages: [
-            { dir: "in",  text: "Hi, can you share the container number for my Model Y?", t: "10:55" }
-          ]
-        },
-        {
-          id: "i5", name: "Мария Янкова", when: "вчера",
-          snippet: "Платих капарото — 4500 лв",
-          car: "VW Tiguan",
-          messages: [
-            { dir: "out", text: "Получихме капарото, благодарим! Утре получавате официална разписка.", t: "вчера" }
-          ]
-        }
-      ];
-
-      const list = document.getElementById("inbox-list");
-      const threadName = document.getElementById("thread-name");
-      const threadCar  = document.getElementById("thread-car");
-      const threadMsgs = document.getElementById("thread-msgs");
-      let activeInbox = inbox[0].id;
-
-      function renderInboxList() {
-        list.innerHTML = inbox.map((it) => `
-          <button type="button" class="inbox-item ${it.id === activeInbox ? "active" : ""}" data-inbox-id="${esc(it.id)}">
-            <div class="name"><span>${esc(it.name)}</span><span class="when">${esc(it.when)}</span></div>
-            <div class="snippet">${esc(it.snippet)}</div>
-            <div class="car-tag">${esc(it.car || "—")}</div>
-          </button>
-        `).join("");
-      }
-      function renderThread() {
-        const it = inbox.find((x) => x.id === activeInbox) || inbox[0];
-        threadName.textContent = it.name;
-        threadCar.textContent = it.car || "—";
-        threadMsgs.innerHTML = (it.messages || [{ dir: "in", text: it.snippet, t: it.when }]).map((m) => `
-          <div class="msg ${esc(m.dir)}">${esc(m.text)}<div class="meta">${esc(m.t)}</div></div>
-        `).join("");
-      }
-      list.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-inbox-id]");
-        if (!btn) return;
-        activeInbox = btn.dataset.inboxId;
-        renderInboxList();
-        renderThread();
-      });
-      renderInboxList();
-      renderThread();
-
       // ── ad form: mode segment ──────────────────────────────────────
       const adSeg = document.getElementById("ad-mode");
       adSeg.addEventListener("click", (e) => {
@@ -1665,8 +1437,8 @@
             priceRange.style.display = on ? "" : "none";
             priceSingle.style.display = on ? "none" : "";
             adPrice.innerHTML = on
-              ? '44 500 – 48 900 <span class="cur">лв</span>'
-              : '44 500 <span class="cur">лв</span>';
+              ? '22 750 – 25 000 <span class="cur">€</span>'
+              : '22 750 <span class="cur">€</span>';
           } else if (k === "running") {
             previewRunning.textContent = on ? "Да" : "Не";
             previewRunning.style.color = on ? "var(--accent)" : "var(--warn)";
